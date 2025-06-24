@@ -129,6 +129,38 @@ fn prepare_run_command(
                 ],
             }
         }
+        SystemConfig::LocalGit { path, rev } => {
+            if be_chatty {
+                println!("system: local git {path}");
+                println!("   rev: {rev}");
+            }
+
+            let toolsdir = storage
+                .join("local")
+                .join(base64::prelude::BASE64_STANDARD.encode(path))
+                .join(rev);
+            let exe_name = if cfg!(windows) {
+                "hubris-build.exe"
+            } else {
+                "hubris-build"
+            };
+            let binary_path = toolsdir.join("bin").join(exe_name);
+
+            ExecStrategy::CargoInstall {
+                binary_path,
+                flags_if_needed: vec![
+                    "--root".to_string(),
+                    toolsdir.display().to_string(),
+                    "--path".to_string(),
+                    path.clone(),
+                    "--rev".to_string(),
+                    rev.clone(),
+                    "hubris-build".to_string(),
+                    "--bin".to_string(),
+                    "hubris-build".to_string(),
+                ],
+            }
+        }
         SystemConfig::Here => {
             if be_chatty {
                 println!("system: in project root");
@@ -186,7 +218,6 @@ fn prepare_run_command(
     };
     Ok(toolcmd)
 }
-
 enum ExecStrategy {
     CargoInstall {
         binary_path: PathBuf,
@@ -262,5 +293,6 @@ struct Config {
 #[serde(rename_all = "kebab-case")]
 enum SystemConfig {
     Git { repo: String, rev: String },
+    LocalGit { path: String, rev: String },
     Here,
 }
