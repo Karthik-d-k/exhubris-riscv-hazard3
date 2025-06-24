@@ -1,13 +1,13 @@
-pub mod appcfg;
 pub mod alloc;
-pub mod idl;
-pub mod config;
-pub mod bundle;
+pub mod appcfg;
 pub mod buildid;
-pub mod relink;
+pub mod bundle;
 pub mod cargo;
-pub mod verbose;
+pub mod config;
+pub mod idl;
 pub mod kconfig;
+pub mod relink;
+pub mod verbose;
 
 use std::{ffi::OsStr, path::PathBuf, process::Command};
 
@@ -31,37 +31,43 @@ pub struct BuildEnv {
 pub fn determine_build_env() -> miette::Result<BuildEnv> {
     let sysroot = Command::new("rustc")
         .args(["--print", "sysroot"])
-        .output().into_diagnostic()?;
+        .output()
+        .into_diagnostic()?;
     if !sysroot.status.success() {
         panic!("Could not find execute rustc to get sysroot");
     }
-    let sysroot = PathBuf::from(std::str::from_utf8(&sysroot.stdout).into_diagnostic()?.trim());
+    let sysroot = PathBuf::from(
+        std::str::from_utf8(&sysroot.stdout)
+            .into_diagnostic()?
+            .trim(),
+    );
 
     let host = Command::new(sysroot.join("bin").join("rustc"))
         .arg("-vV")
-        .output().into_diagnostic()?;
+        .output()
+        .into_diagnostic()?;
     if !host.status.success() {
         panic!("Could not execute rustc to get host");
     }
     let output = std::str::from_utf8(&host.stdout).into_diagnostic()?;
-    let host_triple = output.lines()
+    let host_triple = output
+        .lines()
         .find_map(|line| line.strip_prefix("host: "))
         .ok_or_else(|| miette!("Could not get host from rustc"))?
         .to_string();
-    let release = output.lines()
+    let release = output
+        .lines()
         .find_map(|line| line.strip_prefix("release: "))
         .ok_or_else(|| miette!("Could not get release from rustc"))?
         .to_string();
 
     let mut linker_path = sysroot.clone();
-    linker_path.extend([
-        "lib",
-        "rustlib",
-        &host_triple,
-        "bin",
-        "gcc-ld",
-        "ld.lld.exe",
-    ]);
+    let exe_name = if cfg!(windows) {
+        "ld.lld.exe"
+    } else {
+        "ld.lld"
+    };
+    linker_path.extend(["lib", "rustlib", &host_triple, "bin", "gcc-ld", exe_name]);
     if !std::fs::exists(&linker_path).into_diagnostic()? {
         bail!("linker not available at: {}", linker_path.display());
     }
@@ -117,35 +123,23 @@ impl TargetSpec {
     pub fn align_for_allocation_size(&self, addr: u64, size: u64) -> u64 {
         let size = u64::max(size, self.alloc_minimum);
         match self.size_rule {
-            SizeRule::PowerOfTwo => {
-                addr.next_multiple_of(size)
-            }
-            SizeRule::MultipleOf(n) => {
-                addr.next_multiple_of(n)
-            }
+            SizeRule::PowerOfTwo => addr.next_multiple_of(size),
+            SizeRule::MultipleOf(n) => addr.next_multiple_of(n),
         }
     }
 
     pub fn align_to_next_larger_boundary(&self, addr: u64) -> u64 {
         match self.size_rule {
-            SizeRule::PowerOfTwo => {
-                addr + (1 << addr.trailing_zeros())
-            }
-            SizeRule::MultipleOf(n) => {
-                addr.next_multiple_of(n)
-            }
+            SizeRule::PowerOfTwo => addr + (1 << addr.trailing_zeros()),
+            SizeRule::MultipleOf(n) => addr.next_multiple_of(n),
         }
     }
 
     pub fn round_allocation_size(&self, size: u64) -> u64 {
         let size = u64::max(size, self.alloc_minimum);
         match self.size_rule {
-            SizeRule::PowerOfTwo => {
-                size.next_power_of_two()
-            }
-            SizeRule::MultipleOf(n) => {
-                size.next_multiple_of(n)
-            }
+            SizeRule::PowerOfTwo => size.next_power_of_two(),
+            SizeRule::MultipleOf(n) => size.next_multiple_of(n),
         }
     }
 

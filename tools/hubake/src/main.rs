@@ -1,6 +1,9 @@
-use std::{path::{Path, PathBuf}, process::Command};
+use std::{
+    path::{Path, PathBuf},
+    process::Command,
+};
 
-use anyhow::{bail, Context as _, anyhow};
+use anyhow::{anyhow, bail, Context as _};
 use base64::Engine;
 use serde::Deserialize;
 
@@ -9,7 +12,8 @@ fn main() -> anyhow::Result<()> {
 
     match args.first().map(|s| s.as_str()) {
         Some("help" | "--help" | "-h") => {
-            println!("\
+            println!(
+                "\
                 hubake <subcommand>\n\
                 \n\
                 where <subcommand> is one of:\n\
@@ -24,13 +28,13 @@ fn main() -> anyhow::Result<()> {
                 \n\
                     help\n\
                 \n\
-                    Shows this message and exits with an error code.");
+                    Shows this message and exits with an error code."
+            );
             std::process::exit(1);
         }
         Some("setup") => {
             let mut given_root = None;
-            std::env::current_dir()
-                    .context("can't get current directory?")?;
+            std::env::current_dir().context("can't get current directory?")?;
             let mut force_reinstall = false;
             for arg in &args[1..] {
                 match arg.as_str() {
@@ -49,22 +53,21 @@ fn main() -> anyhow::Result<()> {
             let given_root = if let Some(r) = given_root {
                 r
             } else {
-                std::env::current_dir()
-                    .context("can't get current directory?")?
+                std::env::current_dir().context("can't get current directory?")?
             };
             let project_root = find_project_root(&given_root)?;
             println!("checking setup in project root: {}", project_root.display());
             let config = load_config(&project_root)?;
 
-            let _cmd = prepare_run_command(&project_root, &config, &storage, force_reinstall, true)?;
+            let _cmd =
+                prepare_run_command(&project_root, &config, &storage, force_reinstall, true)?;
 
             println!("setup complete");
         }
         _ => {
             // passthrough
             let storage = prepare_storage_dir()?;
-            let given_root = std::env::current_dir()
-                    .context("can't get current directory?")?;
+            let given_root = std::env::current_dir().context("can't get current directory?")?;
             let project_root = find_project_root(&given_root)?;
             let config = load_config(&project_root)?;
             let mut cmd = prepare_run_command(&project_root, &config, &storage, false, false)?;
@@ -99,10 +102,16 @@ fn prepare_run_command(
                 println!("   rev: {rev}");
             }
 
-            let toolsdir = storage.join("git")
+            let toolsdir = storage
+                .join("git")
                 .join(base64::prelude::BASE64_STANDARD.encode(repo))
                 .join(rev);
-            let binary_path = toolsdir.join("bin").join("hubris-build");
+            let exe_name = if cfg!(windows) {
+                "hubris-build.exe"
+            } else {
+                "hubris-build"
+            };
+            let binary_path = toolsdir.join("bin").join(exe_name);
 
             ExecStrategy::CargoInstall {
                 binary_path,
@@ -117,7 +126,6 @@ fn prepare_run_command(
                     "hubris-build".to_string(),
                     "--bin".to_string(),
                     "hubris-build".to_string(),
-
                 ],
             }
         }
@@ -133,9 +141,14 @@ fn prepare_run_command(
     };
 
     let toolcmd = match strat {
-        ExecStrategy::CargoInstall { binary_path, flags_if_needed } => {
-            if !force_reinstall && std::fs::exists(&binary_path)
-                .with_context(|| format!("can't check existence of tool at {}", binary_path.display()))?
+        ExecStrategy::CargoInstall {
+            binary_path,
+            flags_if_needed,
+        } => {
+            if !force_reinstall
+                && std::fs::exists(&binary_path).with_context(|| {
+                    format!("can't check existence of tool at {}", binary_path.display())
+                })?
             {
                 if be_chatty {
                     println!("tool already built");
@@ -160,7 +173,10 @@ fn prepare_run_command(
 
             Command::new(binary_path)
         }
-        ExecStrategy::DirectRun { package_name, bin_name } => {
+        ExecStrategy::DirectRun {
+            package_name,
+            bin_name,
+        } => {
             let mut cmd = Command::new("cargo");
             cmd.current_dir(project_root);
             cmd.args(["run", "-q", "-p", &package_name, "--bin", &bin_name]);
@@ -183,27 +199,35 @@ enum ExecStrategy {
 }
 
 fn prepare_storage_dir() -> anyhow::Result<PathBuf> {
-    let path = dirs::data_dir().ok_or_else(|| anyhow!("can't get data directory for user?"))?
+    let path = dirs::data_dir()
+        .ok_or_else(|| anyhow!("can't get data directory for user?"))?
         .join("hubris");
 
     std::fs::create_dir_all(&path)
         .with_context(|| format!("can't create storage directory at path: {}", path.display()))?;
 
     let git_dir = path.join("git");
-    std::fs::create_dir_all(&git_dir)
-        .with_context(|| format!("can't create storage directory at path: {}", git_dir.display()))?;
+    std::fs::create_dir_all(&git_dir).with_context(|| {
+        format!(
+            "can't create storage directory at path: {}",
+            git_dir.display()
+        )
+    })?;
 
     Ok(path)
 }
 
 fn find_project_root(orig_path: impl AsRef<Path>) -> anyhow::Result<PathBuf> {
     let orig_path = orig_path.as_ref();
-    let mut pathbuf = orig_path.canonicalize()
+    let mut pathbuf = orig_path
+        .canonicalize()
         .with_context(|| format!("can't interpret path: {}", orig_path.display()))?;
 
     loop {
         let config_path = pathbuf.join("hubris-env.toml");
-        if std::fs::exists(&config_path).with_context(|| format!("can't check existence of path: {}", config_path.display()))? {
+        if std::fs::exists(&config_path)
+            .with_context(|| format!("can't check existence of path: {}", config_path.display()))?
+        {
             return Ok(pathbuf);
         }
 
@@ -212,7 +236,10 @@ fn find_project_root(orig_path: impl AsRef<Path>) -> anyhow::Result<PathBuf> {
         }
     }
 
-    bail!("unable to find a hubris-env.toml in {} or any parent directory", orig_path.display())
+    bail!(
+        "unable to find a hubris-env.toml in {} or any parent directory",
+        orig_path.display()
+    )
 }
 
 fn load_config(root: impl AsRef<Path>) -> anyhow::Result<Config> {
@@ -234,9 +261,6 @@ struct Config {
 #[serde(tag = "source")]
 #[serde(rename_all = "kebab-case")]
 enum SystemConfig {
-    Git {
-        repo: String,
-        rev: String,
-    },
+    Git { repo: String, rev: String },
     Here,
 }
