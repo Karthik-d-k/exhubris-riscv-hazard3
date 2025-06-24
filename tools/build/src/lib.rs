@@ -60,7 +60,7 @@ pub fn determine_build_env() -> miette::Result<BuildEnv> {
         &host_triple,
         "bin",
         "gcc-ld",
-        "ld.lld",
+        "ld.lld.exe",
     ]);
     if !std::fs::exists(&linker_path).into_diagnostic()? {
         bail!("linker not available at: {}", linker_path.display());
