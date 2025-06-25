@@ -1,18 +1,33 @@
-use std::{collections::{BTreeMap, BTreeSet}, fs, io::{ErrorKind, Write as _}, path::{Path, PathBuf}, sync::Arc, time::Instant};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    fs,
+    io::{ErrorKind, Write as _},
+    path::{Path, PathBuf},
+    sync::Arc,
+    time::Instant,
+};
 
 use clap::Parser;
+use hubris_build::{
+    alloc::allocate_space,
+    appcfg,
+    buildid::BuildId,
+    cargo::{do_cargo_build, LinkStyle},
+    get_target_spec,
+    relink::{collect_sizes, merge_ranges, relink_final, relink_for_size},
+    verbose::{banner, print_allocations, simple_table},
+};
+use hubris_region_alloc::{Mem, TaskInfo, TaskName};
 use miette::{miette, Context, IntoDiagnostic as _, LabeledSpan, NamedSource};
 use rangemap::RangeMap;
 use size::Size;
-use hubris_build::{alloc::allocate_space, appcfg, buildid::BuildId, cargo::{do_cargo_build, LinkStyle}, get_target_spec, relink::{collect_sizes, merge_ranges, relink_final, relink_for_size}, verbose::{banner, print_allocations, simple_table}};
-use hubris_region_alloc::{Mem, TaskInfo, TaskName};
 
 #[derive(Parser)]
 struct Tool {
     #[clap(subcommand)]
     cmd: Cmd,
 
-    #[clap(short, long, global=true)]
+    #[clap(short, long, global = true)]
     verbose: bool,
 }
 
@@ -45,9 +60,7 @@ enum Cmd {
         gdbconfig: Option<PathBuf>,
     },
     /// Reads and performs basic checks on an IDL file.
-    CheckIdl {
-        path: PathBuf,
-    },
+    CheckIdl { path: PathBuf },
     /// Produces an output bundle from raw files on disk, which can be useful if
     /// you're modifying the bundle somehow.
     Bundle {
@@ -64,9 +77,12 @@ fn main() -> miette::Result<()> {
     let args = Tool::parse();
 
     match args.cmd {
-
         // The Build Command
-        Cmd::Build { cfg_path, cargo_verbose, out } => {
+        Cmd::Build {
+            cfg_path,
+            cargo_verbose,
+            out,
+        } => {
             // Canonicalize directories and locate/parse input files.
             let root = std::env::var("HUBRIS_PROJECT_ROOT").into_diagnostic()?;
             let root = PathBuf::from(root);
@@ -78,9 +94,7 @@ fn main() -> miette::Result<()> {
                 cfg_path.display().to_string(),
                 doc_src.clone(),
             ));
-            let doc: kdl::KdlDocument = appcfg::add_source(&source, || {
-                Ok(doc_src.parse()?)
-            })?;
+            let doc: kdl::KdlDocument = appcfg::add_source(&source, || Ok(doc_src.parse()?))?;
             let ctx = appcfg::FsContext::from_root(&root);
             let app = appcfg::parse_app(source, &doc, &ctx)?;
 
@@ -88,8 +102,8 @@ fn main() -> miette::Result<()> {
             let mut buildid = BuildId::new();
 
             // See if we understand this target.
-            let target_spec = get_target_spec(app.board.chip.target_triple.value())
-                .ok_or_else(|| {
+            let target_spec =
+                get_target_spec(app.board.chip.target_triple.value()).ok_or_else(|| {
                     miette!(
                         labels = [LabeledSpan::at(
                             app.board.chip.target_triple.span(),
@@ -122,6 +136,7 @@ fn main() -> miette::Result<()> {
             // TODO: currently this assumes that the project root is also the
             // workspace root; this is not necessarily true? TBD.
             let targetroot = root.join("target");
+            maybe_create_dir(&targetroot).into_diagnostic()?;
             // Create our working directory.
             let workdir = root.join(".work").join(app.name.value());
             maybe_create_dir(&workdir).into_diagnostic()?;
@@ -193,7 +208,12 @@ fn main() -> miette::Result<()> {
             // algorithms with potentially poor scaling behavior, we time how
             // long it takes.
             let alloc_begin = Instant::now();
-            let allocs = allocate_space(&target_spec, &app.board.chip.memory, &size_reqs, &app.kernel)?;
+            let allocs = allocate_space(
+                &target_spec,
+                &app.board.chip.memory,
+                &size_reqs,
+                &app.kernel,
+            )?;
             let alloc_time = alloc_begin.elapsed();
 
             buildid.hash(&allocs);
@@ -224,7 +244,8 @@ fn main() -> miette::Result<()> {
                     &dir3.join(taskname),
                     &workdir.join("task-link3.x"),
                     &allocs.tasks[taskname],
-                ).with_context(|| format!("failed final link for task {taskname}"))?;
+                )
+                .with_context(|| format!("failed final link for task {taskname}"))?;
 
                 built_tasks.push(built_task);
             }
@@ -239,17 +260,20 @@ fn main() -> miette::Result<()> {
             // it all remaining memory in each region.
             {
                 let linker_script_path = tmpdir.join("memory.x");
-                let mut scr = std::fs::File::create(&linker_script_path)
-                    .into_diagnostic()?;
+                let mut scr = std::fs::File::create(&linker_script_path).into_diagnostic()?;
                 writeln!(scr, "MEMORY {{").into_diagnostic()?;
 
-                writeln!(scr, "STACK (rw): ORIGIN = {:#x}, LENGTH = {:#x}",
+                writeln!(
+                    scr,
+                    "STACK (rw): ORIGIN = {:#x}, LENGTH = {:#x}",
                     allocs.kernel.stack.start,
                     allocs.kernel.stack.end - allocs.kernel.stack.start,
-                    ).into_diagnostic()?;
+                )
+                .into_diagnostic()?;
 
                 for orig_name in app.board.chip.memory.keys() {
-                    let Some(regalloc) = allocs.kernel.by_region.get(&Mem(orig_name.clone())) else {
+                    let Some(regalloc) = allocs.kernel.by_region.get(&Mem(orig_name.clone()))
+                    else {
                         continue;
                     };
 
@@ -257,7 +281,8 @@ fn main() -> miette::Result<()> {
                     let base = regalloc.start;
                     let size = regalloc.end - regalloc.start;
 
-                    writeln!(scr, "{name} (rw): ORIGIN = {base:#x}, LENGTH = {size:#x}").into_diagnostic()?;
+                    writeln!(scr, "{name} (rw): ORIGIN = {base:#x}, LENGTH = {size:#x}")
+                        .into_diagnostic()?;
                 }
                 writeln!(scr, "}}").into_diagnostic()?;
 
@@ -283,10 +308,10 @@ fn main() -> miette::Result<()> {
             std::fs::write(workdir.join("kernel-link.x"), kernel_link_text).into_diagnostic()?;
 
             // Finalize the buildid and insert it into the kernel env.
-            overall_plan.kernel.smuggled_env.insert(
-                "HUBRIS_IMAGE_ID".to_string(),
-                buildid.finish().to_string(),
-            );
+            overall_plan
+                .kernel
+                .smuggled_env
+                .insert("HUBRIS_IMAGE_ID".to_string(), buildid.finish().to_string());
 
             // Build the actual kernel.
             do_cargo_build(
@@ -307,24 +332,14 @@ fn main() -> miette::Result<()> {
                 let ksizes = collect_sizes(&app, &kernel_image)?;
                 println!();
                 println!("Allocations ({alloc_time:?}):");
-                print_allocations(
-                    &app,
-                    &allocs.by_region(),
-                    &ksizes,
-                );
+                print_allocations(&app, &allocs.by_region(), &ksizes);
             }
 
             std::fs::remove_file(tmpdir.join("memory.x")).into_diagnostic()?;
 
             // Construct a bundle containing the output.
-            let out = out.unwrap_or_else(|| {
-                root.join(format!("{}-build.zip", app.name.value()))
-            });
-            hubris_build::bundle::make_bundle(
-                &app,
-                &dir3,
-                &out,
-            ).into_diagnostic()?;
+            let out = out.unwrap_or_else(|| root.join(format!("{}-build.zip", app.name.value())));
+            hubris_build::bundle::make_bundle(&app, &dir3, &out).into_diagnostic()?;
 
             banner(format!("Build complete! Archive: {}", out.display()));
 
@@ -332,7 +347,11 @@ fn main() -> miette::Result<()> {
         }
 
         // The PackHex Command
-        Cmd::PackHex { bindir, outpath, gdbconfig } => {
+        Cmd::PackHex {
+            bindir,
+            outpath,
+            gdbconfig,
+        } => {
             let mut overall_segments = RangeMap::new();
             let mut protohex = vec![];
             let mut start = None;
@@ -355,7 +374,8 @@ fn main() -> miette::Result<()> {
                         }
                         overall_segments.insert(arange, name.clone());
                         if phdr.p_filesz != 0 {
-                            let slice = &bytes[phdr.p_offset as usize..(phdr.p_offset + phdr.p_filesz) as usize];
+                            let slice = &bytes
+                                [phdr.p_offset as usize..(phdr.p_offset + phdr.p_filesz) as usize];
 
                             for (i, chunk) in slice.chunks(255).enumerate() {
                                 let addr = phdr.p_paddr + i as u64 * 255;
@@ -387,33 +407,27 @@ fn main() -> miette::Result<()> {
 
             let mut rows = vec![];
             for (range, entity) in overall_segments.iter() {
-                rows.push((
-                    range.start,
-                    range.end,
-                    entity.clone(),
-                ));
+                rows.push((range.start, range.end, entity.clone()));
             }
             let bottom = overall_segments.first_range_value().unwrap().0.start;
             let top = overall_segments.last_range_value().unwrap().0.end;
             for gap in overall_segments.gaps(&(bottom..top)) {
-                rows.push((
-                    gap.start,
-                    gap.end,
-                    "- unused -".to_string(),
-                ));
+                rows.push((gap.start, gap.end, "- unused -".to_string()));
             }
             rows.sort();
             let mut table = comfy_table::Table::new();
             table.load_preset(comfy_table::presets::NOTHING);
             table.set_header(["START", "END (ex)", "OWNER"]);
-            table.column_mut(0).unwrap().set_cell_alignment(comfy_table::CellAlignment::Right);
-            table.column_mut(1).unwrap().set_cell_alignment(comfy_table::CellAlignment::Right);
+            table
+                .column_mut(0)
+                .unwrap()
+                .set_cell_alignment(comfy_table::CellAlignment::Right);
+            table
+                .column_mut(1)
+                .unwrap()
+                .set_cell_alignment(comfy_table::CellAlignment::Right);
             for row in rows {
-                table.add_row([
-                    format!("{:#x}", row.0),
-                    format!("{:#x}", row.1),
-                    row.2,
-                ]);
+                table.add_row([format!("{:#x}", row.0), format!("{:#x}", row.1), row.2]);
             }
             println!("{table}");
 
@@ -463,7 +477,11 @@ fn main() -> miette::Result<()> {
         }
 
         // The Bundle Command
-        Cmd::Bundle { cfg_path, bindir, outpath } => {
+        Cmd::Bundle {
+            cfg_path,
+            bindir,
+            outpath,
+        } => {
             // Canonicalize directories and locate/parse input files.
             let root = std::env::var("HUBRIS_PROJECT_ROOT").into_diagnostic()?;
             let root = PathBuf::from(root);
@@ -474,20 +492,18 @@ fn main() -> miette::Result<()> {
                 cfg_path.display().to_string(),
                 doc_src.clone(),
             ));
-            let doc: kdl::KdlDocument = appcfg::add_source(&source, || {
-                Ok(doc_src.parse()?)
-            })?;
+            let doc: kdl::KdlDocument = appcfg::add_source(&source, || Ok(doc_src.parse()?))?;
             let ctx = appcfg::FsContext::from_root(&root);
             let app = appcfg::parse_app(source, &doc, &ctx)?;
 
-            hubris_build::bundle::make_bundle(
-                &app,
-                &bindir,
-                &outpath,
-            ).into_diagnostic()?;
+            hubris_build::bundle::make_bundle(&app, &bindir, &outpath).into_diagnostic()?;
 
             let final_meta = std::fs::metadata(&outpath).into_diagnostic()?;
-            println!("built {}: {} on disk", outpath.display(), Size::from_bytes(final_meta.len()));
+            println!(
+                "built {}: {} on disk",
+                outpath.display(),
+                Size::from_bytes(final_meta.len())
+            );
             Ok(())
         }
     }
@@ -499,11 +515,14 @@ pub fn guess_intent<'a>(
 ) -> BTreeSet<&'a str> {
     const MAX: usize = 4;
 
-    valid_options.into_iter()
-        .filter_map(|option| if strsim::damerau_levenshtein(value, option) <= MAX {
-            Some(option.as_str())
-        } else {
-            None
+    valid_options
+        .into_iter()
+        .filter_map(|option| {
+            if strsim::damerau_levenshtein(value, option) <= MAX {
+                Some(option.as_str())
+            } else {
+                None
+            }
         })
         .collect()
 }
