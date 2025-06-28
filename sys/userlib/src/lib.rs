@@ -133,8 +133,7 @@ impl TaskId {
     /// really must be dynamic) the `hubris_num_tasks` crate for validating
     /// them.
     pub const fn new(task_index: u16, generation: Gen) -> Self {
-        Self(task_index & ((1 << GEN_BITS) - 1)
-            | ((generation.0 as u16) << (16 - GEN_BITS)))
+        Self(task_index & ((1 << GEN_BITS) - 1) | ((generation.0 as u16) << (16 - GEN_BITS)))
     }
 
     /// Produces a `TaskId` for the given index, with generation zero.
@@ -327,7 +326,9 @@ impl TryFrom<ResponseCode> for TaskDeath {
     type Error = NotADeadCode;
     fn try_from(rc: ResponseCode) -> Result<Self, Self::Error> {
         if rc.0 & 0xFFFF_FF00 == 0xFFFF_FF00 {
-            Ok(TaskDeath { now: Gen(rc.0 as u8) })
+            Ok(TaskDeath {
+                now: Gen(rc.0 as u8),
+            })
         } else {
             Err(NotADeadCode)
         }
@@ -415,7 +416,6 @@ pub enum ReplyFaultReason {
     AccessViolation = 5,
 }
 
-
 /// Requests that the CPU spin waiting for an interrupt, if possible.
 ///
 /// Generally, this function is only useful to one task in the system, the idle
@@ -429,7 +429,6 @@ pub fn idle() {
     arch::idle();
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
 // Architecture-specific includes and re-exports
 
@@ -440,6 +439,9 @@ cfg_if::cfg_if! {
         hubris_target = "thumbv6m-none-eabi",
     ))] {
         #[path = "arch/arm_m.rs"]
+        mod arch;
+    } else if #[cfg(hubris_target = "riscv32imac-unknown-none-elf")] {
+        #[path = "arch/riscv32.rs"]
         mod arch;
     } else {
         #[path = "arch/fake.rs"]
@@ -501,7 +503,6 @@ pub use self::arch::sys_borrow_write;
 #[doc(inline)]
 pub use self::arch::sys_post;
 
-
 ///////////////////////////////////////////////////////////////////////////////
 // Convenience wrappers around raw syscalls.
 
@@ -526,24 +527,15 @@ pub fn send_with_retry_on_death(
     leases: &mut [Lease<'_>],
 ) -> (ResponseCode, usize) {
     loop {
-        let r = sys_send(
-            tid_holder.get(),
-            operation,
-            outgoing,
-            incoming,
-            leases,
-        );
+        let r = sys_send(tid_holder.get(), operation, outgoing, incoming, leases);
         match r {
             Ok(rc_and_len) => break rc_and_len,
             Err(dead) => {
-                tid_holder.set(
-                    tid_holder.get().with_generation(dead.new_generation())
-                );
+                tid_holder.set(tid_holder.get().with_generation(dead.new_generation()));
             }
         }
     }
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // Rust panic support.

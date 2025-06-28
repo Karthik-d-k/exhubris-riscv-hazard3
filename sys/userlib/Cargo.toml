@@ -31,6 +31,9 @@ cortex-m = {version = "0.7", features = ["inline-asm"]}
 [target.thumbv6m-none-eabi.dependencies]
 cortex-m = {version = "0.7", features = ["inline-asm"]}
 
+[target.riscv32imac-unknown-none-elf.dependencies]
+riscv = { version = "0.14", features = ["s-mode"] }
+
 [lib]
 test = false
 bench = false
