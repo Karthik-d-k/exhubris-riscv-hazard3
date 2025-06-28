@@ -1,16 +1,14 @@
 [workspace]
 resolver = "2"
 members = [
-    "kernel-generic-*",
-    "sys/*",
-    "task/*",
-    "drv/*",
+    "kernel-generic-hazard3",
     "tools/build",
     "tools/hubake",
     "tools/alloc",
-
-    "app/kbd/basic-scanner",
-    "app/kbd/basic-scanner-api",
+    "sys/userlib",
+    "sys/kipc",
+    "sys/num-tasks",
+    "task/minisuper",
 ]
 
 [workspace.dependencies]
