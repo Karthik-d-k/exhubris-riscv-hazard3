@@ -9,6 +9,7 @@ use crate::{
     Lease, Message, MessageOrNotification, ReplyFaultReason, ResponseCode, TaskDeath, TaskId,
     TimerSettings,
 };
+use core::arch::global_asm;
 use core::mem::MaybeUninit;
 
 extern "Rust" {
