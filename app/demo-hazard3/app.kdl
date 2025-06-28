@@ -1,0 +1,44 @@
+// hazard3 Application Definition
+
+// App name is used for output files etc. It must be the first non-blank
+// non-comment line in the file.
+app hazard3
+
+// Currently the board information is inlined. It would be nice to refer to an
+// external file, like we already do for chip definitions.
+board rp2350-pico2 {
+    chip "proj:chips/hazard3.kdl"
+}
+
+// Instructions for building the kernel.
+kernel {
+    // We'll pull in a kernel definition from hubris-fork git repo.
+    workspace-crate kernel-generic-hazard3
+    // The kernel itself should provide this information eventually, but for now
+    // we have to state it:
+    stack-size 1024
+    // disable default features for now
+    no-default-features
+}
+
+// Supervisor task. Every nontrivial application needs one. The exhubris
+// minisuper implementation is good for most simple systems.
+task super {
+    workspace-crate minisuper
+    stack-size 128 // 256 bytes on a part with an FPU
+    priority 0
+}
+
+// Idle task. Every application needs one, few applications want to write their
+// own. We pull in a standard one from git:
+// task idle {
+//     git-crate {
+//         repo "https://github.com/Karthik-d-k/exhubris-riscv-hazard3/"
+//         package idle
+//         rev "9415ab0acd5586ba93ee4cef47595a5527af3123"
+//     }
+//     stack-size 32
+//     priority 4
+//     // This makes Humility work a _lot_ better.
+//     features insomniac
+// }

@@ -1,0 +1,29 @@
+chip "hazard3"
+target-triple "riscv32imac-unknown-none-elf"
+vector-table-size 0x48 // .pico-sdk\sdk\2.1.1\src\rp2350\hardware_regs\include\hardware\platform_defs.h
+probe-rs-name "RP235x"
+
+compatible {
+    - "rp2350-pico2"
+    - "rp2350-pico2-w"
+}
+
+memory {
+    region "vectors" {
+        base 0x1000_0000
+        size 0x120 // enlarged to accommodate header
+        read
+    }
+    region "flash" {
+        base 0x1000_0120
+        size 0x001F_FEE0
+        read
+        execute
+    }
+    region "ram" {
+        base 0x8000_0000
+        size 0x0008_0000
+        read
+        write
+    }
+}
