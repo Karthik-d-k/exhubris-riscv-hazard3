@@ -394,3 +394,50 @@ pub fn sys_post(task: TaskId, notifications: u32) -> Result<(), TaskDeath> {
     let _ = (task, notifications);
     unimplemented!()
 }
+
+cfg_if::cfg_if! {
+    if #[cfg(hubris_target = "riscv32imac-unknown-none-elf")] {
+        // Add startup code for RISC-V
+        global_asm!("
+        .section .text.start
+        .globl _start
+        _start:
+            # Setup stack pointer using _stack_start symbol from linker
+            la sp, _stack_start
+
+            # Zero the BSS section
+            la a0, __sbss
+            la a1, __ebss
+            bgeu a0, a1, 2f
+        1:
+            sw zero, 0(a0)
+            addi a0, a0, 4
+            bltu a0, a1, 1b
+        2:
+
+            # Copy data section from flash to RAM
+            la a0, __sidata     # source in flash
+            la a1, __sdata      # destination in RAM
+            la a2, __edata      # end of destination
+            bgeu a1, a2, 4f
+        3:
+            lw t0, 0(a0)
+            sw t0, 0(a1)
+            addi a0, a0, 4
+            addi a1, a1, 4
+            bltu a1, a2, 3b
+        4:
+
+            # Call user's main function
+            jal ra, {main}
+
+            # If main returns (it shouldn't), just loop forever
+        _start_hang:
+            j _start_hang
+        ",
+            main = sym main,
+        );
+    } else {
+        compile_error!("unrecognized target for start code");
+    }
+}
