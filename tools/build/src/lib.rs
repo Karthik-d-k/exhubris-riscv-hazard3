@@ -176,7 +176,7 @@ pub fn get_target_spec(triple: &str) -> Option<TargetSpec> {
             alloc_minimum: 32,
             stack_align: 16,
             bfd_name: "elf32lriscv".to_string(),
-            region_count: 8,
+            region_count: 8 - 1, // first region is reserved for the "null" region
         }),
         _ => None,
     }
