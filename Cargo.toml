@@ -2,6 +2,12 @@
 resolver = "2"
 members = [
     "kernel-generic-hazard3",
+    "kernel-generic-stm32g031",
+    "task/idle",
+    "task/ping",
+    "task/pong",
+    "drv/stm32xx-sys",
+    "drv/uart-echo",
     "tools/build",
     "tools/hubake",
     "tools/alloc",
