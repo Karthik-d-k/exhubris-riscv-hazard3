@@ -718,4 +718,4 @@ cfg_if::cfg_if! {
 ///////////////////////////////////////////////////////////////////////////////
 // Hubris ABI version stamping for compat checking.
 
-include!(concat!(env!("OUT_DIR"), "\\hubris_abi_version.rs"));
+include!(concat!(env!("OUT_DIR"), "/hubris_abi_version.rs"));

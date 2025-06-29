@@ -4,4 +4,4 @@
 #![no_std]
 
 /// Number of tasks in the current application.
-pub const NUM_TASKS: usize = include!(concat!(env!("OUT_DIR"), "\\task_count.txt"));
+pub const NUM_TASKS: usize = include!(concat!(env!("OUT_DIR"), "/task_count.txt"));
