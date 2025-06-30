@@ -17,7 +17,7 @@ dependencies = [
 [[package]]
 name = "abi"
 version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#e8ad869fd7c850e6b75ed8b3f463d5215f17250b"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#8b83fd1ce928cf6d8ac16cfe687902549c4e628f"
 dependencies = [
  "bitflags",
  "byteorder",
@@ -128,7 +128,7 @@ dependencies = [
 [[package]]
 name = "armv8-m-mpu"
 version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#e8ad869fd7c850e6b75ed8b3f463d5215f17250b"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#8b83fd1ce928cf6d8ac16cfe687902549c4e628f"
 dependencies = [
  "cortex-m",
 ]
@@ -245,7 +245,7 @@ dependencies = [
 [[package]]
 name = "build-kconfig"
 version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#e8ad869fd7c850e6b75ed8b3f463d5215f17250b"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#8b83fd1ce928cf6d8ac16cfe687902549c4e628f"
 dependencies = [
  "bitflags",
  "serde",
@@ -268,7 +268,7 @@ dependencies = [
 [[package]]
 name = "build-util"
 version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#e8ad869fd7c850e6b75ed8b3f463d5215f17250b"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#8b83fd1ce928cf6d8ac16cfe687902549c4e628f"
 dependencies = [
  "anyhow",
  "indexmap 1.9.3",
@@ -321,7 +321,7 @@ dependencies = [
 [[package]]
 name = "call_rustfmt"
 version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#e8ad869fd7c850e6b75ed8b3f463d5215f17250b"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#8b83fd1ce928cf6d8ac16cfe687902549c4e628f"
 dependencies = [
  "anyhow",
 ]
@@ -1054,7 +1054,7 @@ dependencies = [
 [[package]]
 name = "kern"
 version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#e8ad869fd7c850e6b75ed8b3f463d5215f17250b"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#8b83fd1ce928cf6d8ac16cfe687902549c4e628f"
 dependencies = [
  "abi 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv)",
  "anyhow",
@@ -1091,7 +1091,7 @@ source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubr
 [[package]]
 name = "kerncore"
 version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#e8ad869fd7c850e6b75ed8b3f463d5215f17250b"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#8b83fd1ce928cf6d8ac16cfe687902549c4e628f"
 
 [[package]]
 name = "kernel-generic-hazard3"
@@ -1435,7 +1435,7 @@ source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubr
 [[package]]
 name = "phash"
 version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#e8ad869fd7c850e6b75ed8b3f463d5215f17250b"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#8b83fd1ce928cf6d8ac16cfe687902549c4e628f"
 
 [[package]]
 name = "phash-gen"
@@ -1451,7 +1451,7 @@ dependencies = [
 [[package]]
 name = "phash-gen"
 version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#e8ad869fd7c850e6b75ed8b3f463d5215f17250b"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#8b83fd1ce928cf6d8ac16cfe687902549c4e628f"
 dependencies = [
  "anyhow",
  "phash 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv)",
@@ -1709,10 +1709,10 @@ dependencies = [
 [[package]]
 name = "rp235x-pac"
 version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5ffcb6931deee4242886b5a1df62db5e2555b0eb6ae1e8be101f3ea3e58e65c6"
 dependencies = [
  "cortex-m",
+ "riscv",
+ "riscv-rt",
  "vcell",
 ]
 
@@ -2107,7 +2107,7 @@ dependencies = [
 [[package]]
 name = "toml-task"
 version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#e8ad869fd7c850e6b75ed8b3f463d5215f17250b"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#8b83fd1ce928cf6d8ac16cfe687902549c4e628f"
 dependencies = [
  "anyhow",
  "indexmap 1.9.3",
@@ -2224,7 +2224,7 @@ source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubr
 [[package]]
 name = "unwrap-lite"
 version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#e8ad869fd7c850e6b75ed8b3f463d5215f17250b"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#8b83fd1ce928cf6d8ac16cfe687902549c4e628f"
 
 [[package]]
 name = "userlib"

@@ -4,12 +4,17 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-riscv = { version = "0.14.0", features = ["s-mode"] }
-riscv-rt = { version = "0.15.0", features = ["s-mode", "memory", "device"] }
-rp235x-pac = { version = "0.1.0" }
+riscv = { version = "0.14", default-features = false }
+riscv-rt = { version = "0.15", features = ["device", "memory"] }
+
+[dependencies.rp235x-pac]
+package = "rp235x-pac"
+path = "../../rp235x-pac"
+features = ["rp235x-riscv-rt"]
 
 [dependencies.hubris-kern]
 package = "kern"
 git = "https://github.com/Karthik-d-k/hubris-riscv-hazard3"
 branch = "riscv"
+#path = "../../hubris-riscv-hazard3/sys/kern"
 #features = ["stack-watermark"]

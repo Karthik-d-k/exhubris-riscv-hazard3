@@ -10,19 +10,19 @@ compatible {
 
 memory {
     region "vectors" {
-        base 0x1000_0000
+        base 0x1000_0000 // XIP_BASE
         size 0x120 // enlarged to accommodate header
         read
     }
     region "flash" {
-        base 0x1000_0120
-        size 0x001F_FEE0
+        base 0x1000_0120 // SRAM_BASE
+        size 0x003F_FEE0 // 4MB (0x0040_0000) (FLASH) - 0x120 (vectors) = 0x3FFEE0
         read
         execute
     }
     region "ram" {
-        base 0x8000_0000
-        size 0x0008_0000
+        base 0x2000_0000
+        size 0x0008_2000 // Logically, there is a single 520KB contiguous memory
         read
         write
     }

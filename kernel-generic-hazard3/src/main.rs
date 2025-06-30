@@ -7,7 +7,7 @@
 
 // We have to do this if we don't otherwise use it to ensure its vector table
 // gets linked in.
-extern crate rp235x-pac;
+extern crate rp235x_pac;
 
 use riscv_rt::entry;
 
@@ -16,5 +16,5 @@ fn main() -> ! {
     // Default boot speed, until we bother raising it:
     const CYCLES_PER_MS: u32 = 8_000;
 
-    unsafe { kern::startup::start_kernel(CYCLES_PER_MS) }
+    unsafe { hubris_kern::startup::start_kernel(CYCLES_PER_MS) }
 }
