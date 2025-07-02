@@ -88,7 +88,7 @@ PROVIDE(MachineExternal = DefaultHandler);
 
 PROVIDE(_stext = ORIGIN(REGION_TEXT));
 PROVIDE(_stack_start = ORIGIN(REGION_STACK) + LENGTH(REGION_STACK));
-PROVIDE(_max_hart_id = 0);
+PROVIDE(_max_hart_id = 1); /* 2 hazard3 harts in rp2350 */
 PROVIDE(_hart_stack_size = SIZEOF(.stack) / (_max_hart_id + 1));
 PROVIDE(_heap_size = 0);
 
