@@ -17,4 +17,4 @@ package = "kern"
 git = "https://github.com/Karthik-d-k/hubris-riscv-hazard3"
 branch = "riscv"
 #path = "../../hubris-riscv-hazard3/sys/kern"
-#features = ["stack-watermark"]
+features = ["stack-watermark"]
