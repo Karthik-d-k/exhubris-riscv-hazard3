@@ -5,6 +5,17 @@ version = 4
 [[package]]
 name = "abi"
 version = "0.1.0"
+dependencies = [
+ "bitflags",
+ "byteorder",
+ "phash 0.1.0",
+ "serde",
+ "zerocopy 0.8.26",
+]
+
+[[package]]
+name = "abi"
+version = "0.1.0"
 source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes#061df2fc76433bbc7cc3931a8981fbd509e35c97"
 dependencies = [
  "bitflags",
@@ -12,18 +23,6 @@ dependencies = [
  "phash 0.1.0 (git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes)",
  "serde",
  "zerocopy 0.6.6",
-]
-
-[[package]]
-name = "abi"
-version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#8b83fd1ce928cf6d8ac16cfe687902549c4e628f"
-dependencies = [
- "bitflags",
- "byteorder",
- "phash 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv)",
- "serde",
- "zerocopy 0.8.26",
 ]
 
 [[package]]
@@ -120,7 +119,6 @@ dependencies = [
 [[package]]
 name = "armv8-m-mpu"
 version = "0.1.0"
-source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes#061df2fc76433bbc7cc3931a8981fbd509e35c97"
 dependencies = [
  "cortex-m",
 ]
@@ -128,7 +126,7 @@ dependencies = [
 [[package]]
 name = "armv8-m-mpu"
 version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#8b83fd1ce928cf6d8ac16cfe687902549c4e628f"
+source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes#061df2fc76433bbc7cc3931a8981fbd509e35c97"
 dependencies = [
  "cortex-m",
 ]
@@ -236,7 +234,6 @@ dependencies = [
 [[package]]
 name = "build-kconfig"
 version = "0.1.0"
-source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes#061df2fc76433bbc7cc3931a8981fbd509e35c97"
 dependencies = [
  "bitflags",
  "serde",
@@ -245,10 +242,23 @@ dependencies = [
 [[package]]
 name = "build-kconfig"
 version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#8b83fd1ce928cf6d8ac16cfe687902549c4e628f"
+source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes#061df2fc76433bbc7cc3931a8981fbd509e35c97"
 dependencies = [
  "bitflags",
  "serde",
+]
+
+[[package]]
+name = "build-util"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "indexmap 1.9.3",
+ "ordered-toml",
+ "serde",
+ "serde_json",
+ "toml 0.7.8",
+ "toml-task 0.1.0",
 ]
 
 [[package]]
@@ -263,20 +273,6 @@ dependencies = [
  "serde_json",
  "toml 0.7.8",
  "toml-task 0.1.0 (git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes)",
-]
-
-[[package]]
-name = "build-util"
-version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#8b83fd1ce928cf6d8ac16cfe687902549c4e628f"
-dependencies = [
- "anyhow",
- "indexmap 1.9.3",
- "ordered-toml",
- "serde",
- "serde_json",
- "toml 0.7.8",
- "toml-task 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv)",
 ]
 
 [[package]]
@@ -313,7 +309,6 @@ dependencies = [
 [[package]]
 name = "call_rustfmt"
 version = "0.1.0"
-source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes#061df2fc76433bbc7cc3931a8981fbd509e35c97"
 dependencies = [
  "anyhow",
 ]
@@ -321,7 +316,7 @@ dependencies = [
 [[package]]
 name = "call_rustfmt"
 version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#8b83fd1ce928cf6d8ac16cfe687902549c4e628f"
+source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes#061df2fc76433bbc7cc3931a8981fbd509e35c97"
 dependencies = [
  "anyhow",
 ]
@@ -1025,6 +1020,37 @@ dependencies = [
 [[package]]
 name = "kern"
 version = "0.1.0"
+dependencies = [
+ "abi 0.1.0",
+ "anyhow",
+ "armv8-m-mpu 0.1.0",
+ "bitflags",
+ "build-kconfig 0.1.0",
+ "build-util 0.1.0",
+ "byteorder",
+ "call_rustfmt 0.1.0",
+ "cfg-if",
+ "cortex-m",
+ "indexmap 1.9.3",
+ "kerncore 0.1.0",
+ "phash 0.1.0",
+ "phash-gen 0.1.0",
+ "proc-macro2",
+ "quote",
+ "riscv",
+ "riscv-semihosting",
+ "ron",
+ "serde",
+ "ssmarshal",
+ "syn 2.0.104",
+ "unwrap-lite 0.1.0",
+ "zerocopy 0.8.26",
+ "zerocopy-derive 0.8.26",
+]
+
+[[package]]
+name = "kern"
+version = "0.1.0"
 source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes#061df2fc76433bbc7cc3931a8981fbd509e35c97"
 dependencies = [
  "abi 0.1.0 (git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes)",
@@ -1052,36 +1078,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "kern"
+name = "kerncore"
 version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#8b83fd1ce928cf6d8ac16cfe687902549c4e628f"
-dependencies = [
- "abi 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv)",
- "anyhow",
- "armv8-m-mpu 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv)",
- "bitflags",
- "build-kconfig 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv)",
- "build-util 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv)",
- "byteorder",
- "call_rustfmt 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv)",
- "cfg-if",
- "cortex-m",
- "indexmap 1.9.3",
- "kerncore 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv)",
- "phash 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv)",
- "phash-gen 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv)",
- "proc-macro2",
- "quote",
- "riscv",
- "riscv-rt",
- "ron",
- "serde",
- "ssmarshal",
- "syn 2.0.104",
- "unwrap-lite 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv)",
- "zerocopy 0.8.26",
- "zerocopy-derive 0.8.26",
-]
 
 [[package]]
 name = "kerncore"
@@ -1089,15 +1087,10 @@ version = "0.1.0"
 source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes#061df2fc76433bbc7cc3931a8981fbd509e35c97"
 
 [[package]]
-name = "kerncore"
-version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#8b83fd1ce928cf6d8ac16cfe687902549c4e628f"
-
-[[package]]
 name = "kernel-generic-hazard3"
 version = "0.1.0"
 dependencies = [
- "kern 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv)",
+ "kern 0.1.0",
  "riscv",
  "riscv-rt",
  "rp235x-pac",
@@ -1430,12 +1423,21 @@ dependencies = [
 [[package]]
 name = "phash"
 version = "0.1.0"
-source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes#061df2fc76433bbc7cc3931a8981fbd509e35c97"
 
 [[package]]
 name = "phash"
 version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#8b83fd1ce928cf6d8ac16cfe687902549c4e628f"
+source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes#061df2fc76433bbc7cc3931a8981fbd509e35c97"
+
+[[package]]
+name = "phash-gen"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "phash 0.1.0",
+ "rand 0.8.5",
+ "rand_chacha",
+]
 
 [[package]]
 name = "phash-gen"
@@ -1444,17 +1446,6 @@ source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubr
 dependencies = [
  "anyhow",
  "phash 0.1.0 (git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes)",
- "rand 0.8.5",
- "rand_chacha",
-]
-
-[[package]]
-name = "phash-gen"
-version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#8b83fd1ce928cf6d8ac16cfe687902549c4e628f"
-dependencies = [
- "anyhow",
- "phash 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv)",
  "rand 0.8.5",
  "rand_chacha",
 ]
@@ -1686,6 +1677,16 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.104",
+]
+
+[[package]]
+name = "riscv-semihosting"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "73a1369906473334e14eb09eeb5c5663379f9950b689a2d7d9e3233bc0710a08"
+dependencies = [
+ "critical-section",
+ "riscv",
 ]
 
 [[package]]
@@ -2096,7 +2097,6 @@ dependencies = [
 [[package]]
 name = "toml-task"
 version = "0.1.0"
-source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes#061df2fc76433bbc7cc3931a8981fbd509e35c97"
 dependencies = [
  "anyhow",
  "indexmap 1.9.3",
@@ -2107,7 +2107,7 @@ dependencies = [
 [[package]]
 name = "toml-task"
 version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#8b83fd1ce928cf6d8ac16cfe687902549c4e628f"
+source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes#061df2fc76433bbc7cc3931a8981fbd509e35c97"
 dependencies = [
  "anyhow",
  "indexmap 1.9.3",
@@ -2219,12 +2219,11 @@ checksum = "4a1a07cc7db3810833284e8d372ccdc6da29741639ecc70c9ec107df0fa6154c"
 [[package]]
 name = "unwrap-lite"
 version = "0.1.0"
-source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes#061df2fc76433bbc7cc3931a8981fbd509e35c97"
 
 [[package]]
 name = "unwrap-lite"
 version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#8b83fd1ce928cf6d8ac16cfe687902549c4e628f"
+source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes#061df2fc76433bbc7cc3931a8981fbd509e35c97"
 
 [[package]]
 name = "userlib"
