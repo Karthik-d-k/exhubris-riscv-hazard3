@@ -32,7 +32,7 @@ cortex-m = {version = "0.7", features = ["inline-asm"]}
 cortex-m = {version = "0.7", features = ["inline-asm"]}
 
 [target.riscv32imac-unknown-none-elf.dependencies]
-riscv = { version = "0.14", features = ["s-mode"] }
+riscv = { version = "0.14" }
 
 [lib]
 test = false
