@@ -1,0 +1,46 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "preLaunchTask": "hubake build",
+            "type": "probe-rs-debug",
+            "request": "launch",
+            "name": "probe-rs-debug",
+            "cwd": "${workspaceFolder}",
+            //!MODIFY (or remove)
+            "speed": 500,
+            //!MODIFY (or remove)
+            "probe": "2e8a:000c",
+            "runtimeExecutable": "probe-rs",
+            "runtimeArgs": [
+                "dap-server"
+            ],
+            //!MODIFY
+            "chip": "RP235x",
+            "flashingConfig": {
+                "flashingEnabled": true,
+                "haltAfterReset": true,
+                "formatOptions": {
+                    //!MODIFY (or remove). Valid values are: 'bin', 'hex', 'elf'(default), 'idf'
+                    "binaryFormat": "elf"
+                }
+            },
+            "coreConfigs": [
+                {
+                    "coreIndex": 0,
+                    //!MODIFY
+                    "programBinary": "final.elf",
+                    //!MODIFY
+                    "svdFile": "C:\\Users\\adt8kor\\wws\\riscv\\hubris-riscv-hazard3\\chips\\rp2350-hazard3\\RP2350.svd"
+                }
+            ],
+            "env": {
+                //!MODIFY (or remove)
+                // If you set this variable, check the VSCode console log window for the location of the log file.
+                "RUST_LOG": "info"
+            },
+            // Info, Debug
+            "consoleLogLevel": "Debug"
+        }
+    ]
+}
