@@ -1,4 +1,5 @@
 /target
 .work/
 *build.zip
+*build/
 scratchpad.md

@@ -29,7 +29,7 @@
                 {
                     "coreIndex": 0,
                     //!MODIFY
-                    "programBinary": "final.elf",
+                    "programBinary": "hazard3-build/img/final.elf",
                     //!MODIFY
                     "svdFile": "C:\\Users\\adt8kor\\wws\\riscv\\hubris-riscv-hazard3\\chips\\rp2350-hazard3\\RP2350.svd"
                 }

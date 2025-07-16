@@ -8,8 +8,7 @@
             "args": [
                 "-Command",
                 "hubake build app\\demo-hazard3\\app.kdl; if (-not $?) { exit 1 }; ",
-                "Expand-Archive -Path 'hazard3-build.zip' -DestinationPath '.' -Force; if (-not $?) { exit 1 }; ",
-                "Copy-Item -Path img\\final.elf -Destination final.elf; if (-not $?) { exit 1 }"
+                "Expand-Archive -Path 'hazard3-build.zip' -DestinationPath 'hazard3-build/' -Force; if (-not $?) { exit 1 }; ",
             ],
             "group": {
                 "kind": "build",
