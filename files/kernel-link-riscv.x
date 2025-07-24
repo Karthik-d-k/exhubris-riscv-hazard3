@@ -87,14 +87,38 @@ PROVIDE(SupervisorExternal = DefaultHandler);
 PROVIDE(MachineExternal = DefaultHandler);
 
 PROVIDE(_stext = ORIGIN(REGION_TEXT));
-PROVIDE(_stack_start = ORIGIN(REGION_STACK) + LENGTH(REGION_STACK));
+/*PROVIDE(_stack_start = ORIGIN(REGION_STACK) + LENGTH(REGION_STACK));*/
 PROVIDE(_max_hart_id = 1); /* 2 hazard3 harts in rp2350 */
 PROVIDE(_hart_stack_size = SIZEOF(.stack) / (_max_hart_id + 1));
 PROVIDE(_heap_size = 0);
 
 /* Section layout */
 SECTIONS {
-  /* Optional header for bootloader */
+  /* ### Vector table */
+  .vector_table ORIGIN(VECTORS) :
+  {
+    __start_vector = .;
+    /* Initial Stack Pointer (SP) value */
+    LONG(_stack_start);
+
+    /* Reset vector */
+    KEEP(*(.vector_table.reset_vector)); /* this is the `__RESET_VECTOR` symbol */
+    __reset_vector = .;
+
+    /* Exceptions */
+    KEEP(*(.vector_table.exceptions)); /* this is the `__EXCEPTIONS` symbol */
+    __eexceptions = .;
+
+    /* Device specific interrupts */
+    KEEP(*(.vector_table.interrupts)); /* this is the `__INTERRUPTS` symbol */
+  } > VECTORS
+
+  __vector_size = SIZEOF(.vector_table);
+  /* Header containing data needed by the bootloader.  We specify
+     _HUBRIS_IMAGE_HEADER_SIZE and _HUBRIS_IMAGE_HEADER_ALIGN in memory.x at
+     build time, then reserve enough space for the header here in the linker
+     script.
+   */
   .header : {
     ASSERT(. == ALIGN(_HUBRIS_IMAGE_HEADER_ALIGN), "header alignment invalid");
     HEADER = .;

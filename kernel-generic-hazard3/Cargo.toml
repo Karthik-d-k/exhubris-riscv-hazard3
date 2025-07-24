@@ -10,7 +10,7 @@ riscv-rt = { version = "0.15", features = ["device", "memory"] }
 [dependencies.rp235x-pac]
 package = "rp235x-pac"
 path = "../../rp235x-pac"
-features = ["rp235x-riscv-rt"]
+features = ["rt"]
 
 [dependencies.hubris-kern]
 package = "kern"
