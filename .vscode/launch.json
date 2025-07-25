@@ -2,6 +2,19 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "preLaunchTask": "Start OpenOCD",
+            "executable": "final.elf",
+            "name": "Hubris Riscv Debug",
+            "cwd": "${workspaceFolder}",
+            "request": "attach",
+            "type": "cortex-debug",
+            "servertype": "external",
+            "gdbPath": "riscv32-unknown-elf-gdb.exe",
+            "svdFile": "${workspaceFolder}/app/demo-hazard3/RP2350.svd",
+            "gdbTarget": "localhost:3341",
+            "showDevDebugOutput": "parsed"
+        },
+        {
             "preLaunchTask": "hubake build",
             "type": "probe-rs-debug",
             "request": "launch",
