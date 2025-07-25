@@ -31,14 +31,10 @@ task super {
 
 // Idle task. Every application needs one, few applications want to write their
 // own. We pull in a standard one from git:
-// task idle {
-//     git-crate {
-//         repo "https://github.com/Karthik-d-k/exhubris-riscv-hazard3/"
-//         package idle
-//         rev "9415ab0acd5586ba93ee4cef47595a5527af3123"
-//     }
-//     stack-size 32
-//     priority 4
-//     // This makes Humility work a _lot_ better.
-//     features insomniac
-// }
+task idle {
+    workspace-crate idle
+    stack-size 32
+    priority 4
+    // This makes Humility work a _lot_ better.
+    features insomniac
+}
