@@ -1,49 +1,46 @@
-/* kernel-link-riscv.x — Hubris OS on RP2350 (RISC-V / riscv-rt) */
+/* # Developer notes
+
+- Symbols that start with a double underscore (__) are considered "private"
+
+- Symbols that start with a single underscore (_) are considered "semi-public"; they can be
+  overridden in a user linker script, but should not be referred from user code (e.g. `extern "C" {
+  static mut _heap_size }`).
+
+- `EXTERN` forces the linker to keep a symbol in the final binary. We use this to make sure a
+  symbol is not dropped if it appears in or near the front of the linker arguments and "it's not
+  needed" by any of the preceding objects (linker arguments)
+
+- `PROVIDE` is used to provide default values that can be overridden by a user linker script
+
+- `${ARCH_WIDTH}` is replaced by `4` (TODO: should be 32 acc to riscv-rt crate ??)
+- `${INCLUDE_LINKER_FILES}` is replaced by contents of `exceptions.x`, `interrupts.x` 
+  and added `INCLUDE device.x` from riscv-rt crate.
+    > This is similar to `cargo add riscv-rt -F device`
+
+- REGION_ALIAS are replaced in this file as mentioned below.
+    - REGION_ALIAS("REGION_TEXT", FLASH);
+    - REGION_ALIAS("REGION_RODATA", FLASH);
+    - REGION_ALIAS("REGION_DATA", RAM);
+    - REGION_ALIAS("REGION_BSS", RAM);
+    - REGION_ALIAS("REGION_HEAP", RAM);
+    - REGION_ALIAS("REGION_STACK", L2_LIM);
+
+- On alignment: it's important for correctness that the VMA boundaries of both .bss and .data *and*
+  the LMA of .data are all `4`-byte aligned. These alignments are assumed by the RAM
+  initialization routine. There's also a second benefit: `4`-byte aligned boundaries
+  means that you won't see "Address (..) is out of bounds" in the disassembly produced by `objdump`.
+*/
 
 /* Memory layout defined externally (e.g. memory.x) */
 INCLUDE memory.x
-
-/* riscv-rt memory regions */
-REGION_ALIAS("REGION_TEXT", FLASH);
-REGION_ALIAS("REGION_RODATA", FLASH);
-REGION_ALIAS("REGION_DATA", RAM);
-REGION_ALIAS("REGION_BSS", RAM);
-REGION_ALIAS("REGION_HEAP", RAM);
-REGION_ALIAS("REGION_STACK", RAM);
-
-/* Entry point and trap entry symbol from riscv-rt */
-ENTRY(_start);
-EXTERN(_start_trap);
-
-/* Exception & interrupt handlers */
-EXTERN(ExceptionHandler);
-EXTERN(DefaultHandler);
-EXTERN(__INTERRUPTS);
-
-/* Default exception mapping */
-PROVIDE(InstructionMisaligned   = DefaultHandler);
-PROVIDE(InstructionFault        = DefaultHandler);
-PROVIDE(IllegalInstruction      = DefaultHandler);
-PROVIDE(Breakpoint              = DefaultHandler);
-PROVIDE(LoadMisaligned          = DefaultHandler);
-PROVIDE(LoadFault               = DefaultHandler);
-PROVIDE(StoreMisaligned         = DefaultHandler);
-PROVIDE(StoreFault              = DefaultHandler);
-PROVIDE(UserEnvCall             = DefaultHandler);
-PROVIDE(SupervisorEnvCall       = DefaultHandler);
-PROVIDE(MachineEnvCall          = DefaultHandler);
-PROVIDE(InstructionPageFault    = DefaultHandler);
-PROVIDE(LoadPageFault           = DefaultHandler);
-PROVIDE(StorePageFault          = DefaultHandler);
-
-/* Kernel-specific default handler alias */
-PROVIDE(DefaultHandler = DefaultHandler);
 
 /* Default abort entry point. If no abort symbol is provided, then abort maps to _default_abort. */
 EXTERN(_default_abort);
 PROVIDE(abort = _default_abort);
 
-/* Pre-init hook (optional override via riscv-rt's `pre_init!`) */
+/* Trap for exceptions triggered during initialization. If the execution reaches this point, it
+   means that there is a bug in the boot code. If no _pre_init_trap symbol is provided, then
+  _pre_init_trap defaults to _default_abort. Note that _pre_init_trap must be 4-byte aligned */
 PROVIDE(_pre_init_trap = _default_abort);
 
 /* Multi-processor hook function (for multi-core targets only). If no _mp_hook symbol
@@ -54,12 +51,23 @@ PROVIDE(_pre_init_trap = _default_abort);
 PROVIDE(_default_mp_hook = abort);
 PROVIDE(_mp_hook = _default_mp_hook);
 
+/* Default trap entry point. If not _start_trap symbol is provided, then _start_trap maps to
+   _default_start_trap, which saves caller saved registers, calls _start_trap_rust, restores
+   caller saved registers and then returns. Note that _start_trap must be 4-byte aligned */
+EXTERN(_default_start_trap);
+PROVIDE(_start_trap = _default_start_trap);
+
 /* Default interrupt setup entry point. If not _setup_interrupts symbol is provided, then
    _setup_interrupts maps to _default_setup_interrupts, which in direct mode sets the value
    of the xtvec register to _start_trap and, in vectored mode, sets its value to
    _vector_table and enables vectored mode. */
 EXTERN(_default_setup_interrupts);
 PROVIDE(_setup_interrupts = _default_setup_interrupts);
+
+/* Default main routine. If no hal_main symbol is provided, then hal_main maps to main, which
+   is usually defined by final users via the #[riscv_rt::entry] attribute. Using hal_main
+   instead of main directly allow HALs to inject code before jumping to user main. */
+PROVIDE(hal_main = main);
 
 /* Default exception handler. By default, the exception handler is abort.
    Users can override this alias by defining the symbol themselves */
@@ -76,6 +84,44 @@ PROVIDE(DefaultHandler = abort);
    to avoid compilation errors in direct mode, not to allow users to overwrite the symbol. */
 PROVIDE(_start_DefaultHandler_trap = _start_trap);
 
+PROVIDE(_stext = ORIGIN(FLASH));
+PROVIDE(_stack_start = ORIGIN(RAM) + LENGTH(RAM));
+PROVIDE(_max_hart_id = 0); /* TODO: Should be 1 for dual core hazard3 present in pico 2(w) */
+PROVIDE(_hart_stack_size = SIZEOF(.stack) / (_max_hart_id + 1));
+PROVIDE(_heap_size = 0);
+
+/* $$$$> START: Contents from ${INCLUDE_LINKER_FILES} <$$$$ */
+
+/* # EXCEPTION HANDLERS DESCRIBED IN THE STANDARD RISC-V ISA
+   
+   If the `no-exceptions` feature is DISABLED, this file will be included in link.x.in.
+   If the `no-exceptions` feature is ENABLED, this file will be ignored.
+*/
+
+/* It is possible to define a special handler for each exception type.
+   By default, all exceptions are handled by ExceptionHandler. However,
+   users can override these alias by defining the symbol themselves */
+PROVIDE(InstructionMisaligned = ExceptionHandler);
+PROVIDE(InstructionFault = ExceptionHandler);
+PROVIDE(IllegalInstruction = ExceptionHandler);
+PROVIDE(Breakpoint = ExceptionHandler);
+PROVIDE(LoadMisaligned = ExceptionHandler);
+PROVIDE(LoadFault = ExceptionHandler);
+PROVIDE(StoreMisaligned = ExceptionHandler);
+PROVIDE(StoreFault = ExceptionHandler);
+PROVIDE(UserEnvCall = ExceptionHandler);
+PROVIDE(SupervisorEnvCall = ExceptionHandler);
+PROVIDE(MachineEnvCall = ExceptionHandler);
+PROVIDE(InstructionPageFault = ExceptionHandler);
+PROVIDE(LoadPageFault = ExceptionHandler);
+PROVIDE(StorePageFault = ExceptionHandler);
+
+/* # CORE INTERRUPT HANDLERS DESCRIBED IN THE STANDARD RISC-V ISA
+   
+   If the `no-interrupts` feature is DISABLED, this file will be included in link.x.in.
+   If the `no-interrupts` feature is ENABLED, this file will be ignored.
+*/
+
 /* It is possible to define a special handler for each interrupt type.
    By default, all interrupts are handled by DefaultHandler. However, users can
    override these alias by defining the symbol themselves */
@@ -86,123 +132,207 @@ PROVIDE(MachineTimer = DefaultHandler);
 PROVIDE(SupervisorExternal = DefaultHandler);
 PROVIDE(MachineExternal = DefaultHandler);
 
-PROVIDE(_stext = ORIGIN(REGION_TEXT));
-/*PROVIDE(_stack_start = ORIGIN(REGION_STACK) + LENGTH(REGION_STACK));*/
-PROVIDE(_max_hart_id = 1); /* 2 hazard3 harts in rp2350 */
-PROVIDE(_hart_stack_size = SIZEOF(.stack) / (_max_hart_id + 1));
-PROVIDE(_heap_size = 0);
+/* When vectored trap mode is enabled, each interrupt source must implement its own
+   trap entry point. By default, all interrupts start in _DefaultHandler_trap.
+   However, users can override these alias by defining the symbol themselves */
+PROVIDE(_start_SupervisorSoft_trap = _start_DefaultHandler_trap);
+PROVIDE(_start_MachineSoft_trap = _start_DefaultHandler_trap);
+PROVIDE(_start_SupervisorTimer_trap = _start_DefaultHandler_trap);
+PROVIDE(_start_MachineTimer_trap = _start_DefaultHandler_trap);
+PROVIDE(_start_SupervisorExternal_trap = _start_DefaultHandler_trap);
+PROVIDE(_start_MachineExternal_trap = _start_DefaultHandler_trap);
 
-/* Section layout */
-SECTIONS {
-  /* ### Vector table */
-  .vector_table ORIGIN(VECTORS) :
-  {
-    __start_vector = .;
-    /* Initial Stack Pointer (SP) value */
-    LONG(_stack_start);
+/* Device-specific exception and interrupt handlers */
+INCLUDE device.x
 
-    /* Reset vector */
-    KEEP(*(.vector_table.reset_vector)); /* this is the `__RESET_VECTOR` symbol */
-    __reset_vector = .;
+/* $$$$> END  : Contents from ${INCLUDE_LINKER_FILES} <$$$$ */
 
-    /* Exceptions */
-    KEEP(*(.vector_table.exceptions)); /* this is the `__EXCEPTIONS` symbol */
-    __eexceptions = .;
+SECTIONS
+{
+  /* TODO: do we need this ?? */
+  /* .text.dummy (NOLOAD) : */
+  /* { */
+    /* This section is intended to make _stext address work */
+    /* . = ABSOLUTE(_stext); */
+  /* } > FLASH */
 
-    /* Device specific interrupts */
-    KEEP(*(.vector_table.interrupts)); /* this is the `__INTERRUPTS` symbol */
-  } > VECTORS
-
-  __vector_size = SIZEOF(.vector_table);
   /* Header containing data needed by the bootloader.  We specify
      _HUBRIS_IMAGE_HEADER_SIZE and _HUBRIS_IMAGE_HEADER_ALIGN in memory.x at
      build time, then reserve enough space for the header here in the linker
      script.
    */
-  .header : {
-    ASSERT(. == ALIGN(_HUBRIS_IMAGE_HEADER_ALIGN), "header alignment invalid");
+  .header :
+  {
+    ASSERT(. == ALIGN(_HUBRIS_IMAGE_HEADER_ALIGN), "error: header alignment is invalid");
     HEADER = .;
     . = . + _HUBRIS_IMAGE_HEADER_SIZE;
   } > VECTORS
 
-  /* .text code + init + trap handlers */
-  .text : ALIGN(4) {
-    _stext = .; __stext = .;
-    *(.init); *(.init.rust); KEEP(*(.text.start));
+  .text : ALIGN(4)
+  {
+    _stext = .;
+    __stext = .;
+
+    /* Put reset handler first in .text section so it ends up as the entry */
+    /* point of the program. */
+    KEEP(*(.init));
+    
+    . = ALIGN(4);
+    KEEP(*(.trap.vector));   /* for _trap_vector (vectored mode only) */
+    KEEP(*(.trap.start));    /* for _start_trap routine */
+    KEEP(*(.trap.start.*));  /* for _start_INTERRUPT_trap routines (vectored mode only) */
+    KEEP(*(.trap.continue)); /* for _continue_trap routine (vectored mode only) */
+    KEEP(*(.trap.rust));     /* for _start_trap_rust Rust function */
+    KEEP(*(.trap .trap.*));  /* Other .trap symbols at the end */
+
+    *(.text.abort);
     *(.text .text.*);
-    *(.trap .trap.*);
+
     . = ALIGN(4);
     __etext = .;
   } > FLASH
 
-  /* .rodata including Hubris ID marker */
-  .rodata __etext : ALIGN(4) {
+  .rodata __etext : ALIGN(4)
+  {
     __srodata = .;
-    *(.srodata .srodata.*); *(.rodata .rodata.*);
+
+    *(.srodata .srodata.*);
+    *(.rodata .rodata.*);
+    /* We move this into a special section so we can ensure it is always
+       included in the build */
     KEEP(*(.hubris_id));
+    /* 4-byte align the end (VMA) of this section.
+       This is required by LLD to ensure the LMA of the following .data
+       section will have the correct alignment. */
     . = ALIGN(4);
     __erodata = .;
   } > FLASH
 
-  /* Stack region */
-  .stack (NOLOAD) : ALIGN(16) {
-    _stack_base = .;
-    . = ORIGIN(STACK) + LENGTH(STACK);
-    _stack_start = .;
-  } > STACK
-
-  /* Data region in RAM, loaded from FLASH */
-  .data : ALIGN(8) {
-    . = ALIGN(8);
+  .data : ALIGN(4)
+  {
+    . = ALIGN(4);
     __sdata = .;
-    *(.sdata .sdata.*); *(.data .data.*);
-    . = ALIGN(8);
-  } > RAM AT> FLASH
-  . = ALIGN(8);
+
+    /* Must be called __global_pointer$ for linker relaxations to work. */
+    PROVIDE(__global_pointer$ = . + 0x800);
+    *(.sdata .sdata.* .sdata2 .sdata2.*);
+    *(.data .data.*);
+
+  } > RAM AT > FLASH
+  
+  /* Allow sections from user `memory.x` injected using `INSERT AFTER .data` to
+   * use the .data loading mechanism by pushing __edata. Note: do not change
+   * output region or load region in those user sections! */
+  . = ALIGN(4);
   __edata = .;
+  
+  /* LMA of .data */
   __sidata = LOADADDR(.data);
 
-  /* BSS region, zero-initialized in RAM */
-  .bss (NOLOAD) : ALIGN(8) {
-    . = ALIGN(8);
+  .bss (NOLOAD) : ALIGN(4)
+  {
+    . = ALIGN(4);
     __sbss = .;
-    *(.sbss .sbss.*); *(.bss .bss.*); *(COMMON);
-    . = ALIGN(8);
+
+    *(.sbss .sbss.* .bss .bss.*);
   } > RAM
-  . = ALIGN(8);
+
+  /* Allow sections from user `memory.x` injected using `INSERT AFTER .bss` to
+   * use the .bss zeroing mechanism by pushing __ebss. Note: do not change
+   * output region or load region in those user sections! */
+  . = ALIGN(4);
   __ebss = .;
 
-  /* Uninitialized user data region */
-  .uninit (NOLOAD) : ALIGN(8) {
-    . = ALIGN(8);
+  /* Uninitialized data segment. In contrast with .bss, .uninit is not initialized to zero by
+   * the runtime, and might contain residual data from previous executions or random values
+   * if not explicitly initialized. While .bss and .uninit are different sections, they are
+   * both allocated at RAM, as their purpose is similar. */
+  .uninit (NOLOAD) : ALIGN(4)
+  {
+    . = ALIGN(4);
     __suninit = .;
     *(.uninit .uninit.*);
-    . = ALIGN(8);
+    . = ALIGN(4);
     __euninit = .;
   } > RAM
 
-  /* Define start of heap after uninit */
-  PROVIDE(__sheap = __euninit);
+  /* fictitious region that represents the memory available for the heap */
+  .heap (NOLOAD) : ALIGN(4)
+  {
+    __sheap = .;
+    . += _heap_size;
+    . = ALIGN(4);
+    __eheap = .;
+  } > RAM
 
-  /* GOT/PLT placeholders (must be empty for riscv-rt) */
-  .got (NOLOAD) : { KEEP(*(.got .got.*)); }
-  .plt (NOLOAD) : { KEEP(*(.plt .plt.*)); }
+  /* fictitious region that represents the memory available for the stack */
+  .stack (NOLOAD) :
+  {
+    __estack = .;
+    . = ABSOLUTE(_stack_start);
+    __sstack = .;
+  } > RAM
 
-  /* Discard debug/unneeded sections */
-  /DISCARD/ : {
-    *(.eh_frame); *(.eh_frame_hdr); *(.note.gnu.build-id);
+  /* fake output .got section */
+  /* Dynamic relocations are unsupported. This section is only used to detect
+     relocatable code in the input files and raise an error if relocatable code
+     is found */
+  .got (INFO) :
+  {
+    KEEP(*(.got .got.*));
   }
 }
 
-/* Optional device-tailored memory regions */
-INCLUDE device.x
+/* Do not exceed this mark in the error messages above                                    | */
+ASSERT(ORIGIN(FLASH) % 4 == 0, "
+ERROR(riscv-rt): the start of the FLASH must be 4-byte aligned");
 
-/* Alignment and format validation */
-ASSERT(ORIGIN(FLASH) % 4 == 0, "Flash origin must be 4-byte aligned");
-ASSERT(ORIGIN(RAM)  % 8 == 0, "RAM origin must be 8-byte aligned");
-ASSERT(__sdata % 8 == 0 && __edata % 8 == 0, ".data alignment error");
-ASSERT(__sidata % 4 == 0, ".sidata alignment error");
-ASSERT(__sbss % 8 == 0 && __ebss % 8 == 0, ".bss alignment error");
-ASSERT(__sheap % 8 == 0, "Heap start alignment error");
-ASSERT(ADDR(.got) == ADDR(.plt) && SIZEOF(.got) == 0, "GOT/PLT not allowed");
-ASSERT(_stack_start % 16 == 0, "Stack alignment error");
+ASSERT(ORIGIN(FLASH) % 4 == 0, "
+ERROR(riscv-rt): the start of the FLASH must be 4-byte aligned");
+
+ASSERT(ORIGIN(RAM) % 4 == 0, "
+ERROR(riscv-rt): the start of the RAM must be 4-byte aligned");
+
+ASSERT(ORIGIN(RAM) % 4 == 0, "
+ERROR(riscv-rt): the start of the RAM must be 4-byte aligned");
+
+ASSERT(ORIGIN(RAM) % 4 == 0, "
+ERROR(riscv-rt): the start of the RAM must be 4-byte aligned");
+
+ASSERT(_stext % 4 == 0, "
+ERROR(riscv-rt): `_stext` must be 4-byte aligned");
+
+ASSERT(__sdata % 4 == 0 && __edata % 4 == 0, "
+BUG(riscv-rt): .data is not 4-byte aligned");
+
+ASSERT(__sidata % 4 == 0, "
+BUG(riscv-rt): the LMA of .data is not 4-byte aligned");
+
+ASSERT(__sbss % 4 == 0 && __ebss % 4 == 0, "
+BUG(riscv-rt): .bss is not 4-byte aligned");
+
+ASSERT(__sheap % 4 == 0, "
+BUG(riscv-rt): start of .heap is not 4-byte aligned");
+
+ASSERT(_pre_init_trap % 4 == 0, "
+BUG(riscv-rt): _pre_init_trap is not 4-byte aligned");
+
+ASSERT(_start_trap % 4 == 0, "
+BUG(riscv-rt): _start_trap is not 4-byte aligned");
+
+ASSERT(_stext + SIZEOF(.text) < ORIGIN(FLASH) + LENGTH(FLASH), "
+ERROR(riscv-rt): The .text section must be placed inside the FLASH region.
+Set _stext to an address smaller than 'ORIGIN(FLASH) + LENGTH(FLASH)'");
+
+ASSERT(SIZEOF(.stack) >= (_max_hart_id + 1) * _hart_stack_size, "
+ERROR(riscv-rt): .stack section is too small for allocating stacks for all the harts.
+Consider changing `_max_hart_id` or `_hart_stack_size`.");
+
+/* # Other checks */
+ASSERT(SIZEOF(.got) == 0, "
+ERROR(riscv-rt): .got section detected in the input files. Dynamic relocations are not
+supported. If you are linking to C code compiled using the `cc` crate then modify your
+build script to compile the C code _without_ the -fPIC flag. See the documentation of
+the `cc::Build.pic` method for details.");
+
+/* Do not exceed this mark in the error messages above                                    | */
