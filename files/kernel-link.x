@@ -2,6 +2,38 @@
 /* This will be provided by the user (see `memory.x`) or by a Board Support Crate */
 INCLUDE memory.x
 
+SECTIONS {
+    /* ### Boot ROM info
+    *
+    * Goes after .vector_table, to keep it in the first 4K of flash
+    * where the Boot ROM (and picotool) can find it
+    */
+    .start_block : ALIGN(4)
+    {
+        __start_block_addr = .;
+        KEEP(*(.start_block));
+        KEEP(*(.boot_info));
+    } > FLASH
+
+} INSERT AFTER .vector_table;
+
+/* move .text to start /after/ the boot info */
+_stext = ADDR(.start_block) + SIZEOF(.start_block);
+
+SECTIONS {
+    /* ### Boot ROM extra info
+    *
+    * Goes after everything in our program, so it can contain a signature.
+    */
+    .end_block : ALIGN(4)
+    {
+        __end_block_addr = .;
+        KEEP(*(.end_block));
+        __flash_binary_end = .;
+    } > FLASH
+
+} INSERT AFTER .uninit;
+
 /* # Entry point = reset vector */
 ENTRY(Reset);
 EXTERN(__RESET_VECTOR); /* depends on the `Reset` symbol */
@@ -72,9 +104,8 @@ SECTIONS
   } > VECTORS
 
   /* ### .text */
-  .text : ALIGN(4)
+  .text _stext : ALIGN(4)
   {
-    _stext = .;
     __stext = .;
     /* place these 2 close to each other or the `b` instruction will fail to link */
     *(.PreResetTrampoline);
