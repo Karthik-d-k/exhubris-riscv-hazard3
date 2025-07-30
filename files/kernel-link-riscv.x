@@ -172,7 +172,8 @@ SECTIONS
     /* Put reset handler first in .text section so it ends up as the entry */
     /* point of the program. */
     KEEP(*(.init));
-    
+    . = ALIGN(4);
+    KEEP(*(.start_block));
     . = ALIGN(4);
     KEEP(*(.trap.vector));   /* for _trap_vector (vectored mode only) */
     KEEP(*(.trap.start));    /* for _start_trap routine */

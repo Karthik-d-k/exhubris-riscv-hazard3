@@ -3,14 +3,11 @@ name = "kernel-generic-hazard3"
 version = "0.1.0"
 edition = "2021"
 
-[dependencies]
+[target.riscv32imac-unknown-none-elf.dependencies]
 riscv = { version = "0.14", features = ["critical-section-single-hart"] }
-riscv-rt = { version = "0.15", features = ["device", "memory"] }
-
-[dependencies.rp235x-pac]
-package = "rp235x-pac"
-path = "../../rp235x-pac"
-features = ["rt"]
+riscv-rt = { version = "0.15" }
+rp235x-pac = {version = "0.1.0", features = ["critical-section", "rt"]}
+sha2-const-stable = "0.1"
 
 [dependencies.hubris-kern]
 package = "kern"

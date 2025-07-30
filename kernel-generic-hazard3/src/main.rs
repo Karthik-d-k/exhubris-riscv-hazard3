@@ -5,11 +5,20 @@
 #![no_std]
 #![no_main]
 
+// rp235x-hal: Support for the RP235x Boot ROM's "Block" structures
+pub mod block;
+
 // We have to do this if we don't otherwise use it to ensure its vector table
 // gets linked in.
-extern crate rp235x_pac;
+use rp235x_pac as _;
 
+use crate::block::ImageDef;
 use riscv_rt::entry;
+
+/// Tell the Boot ROM about our application
+#[link_section = ".start_block"]
+#[used]
+pub static IMAGE_DEF: ImageDef = ImageDef::secure_exe();
 
 #[entry]
 fn main() -> ! {
