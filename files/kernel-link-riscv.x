@@ -23,7 +23,7 @@
     - REGION_ALIAS("REGION_DATA", RAM);
     - REGION_ALIAS("REGION_BSS", RAM);
     - REGION_ALIAS("REGION_HEAP", RAM);
-    - REGION_ALIAS("REGION_STACK", L2_LIM);
+    - REGION_ALIAS("REGION_STACK", RAM);
 
 - On alignment: it's important for correctness that the VMA boundaries of both .bss and .data *and*
   the LMA of .data are all `4`-byte aligned. These alignments are assumed by the RAM
@@ -33,7 +33,6 @@
 
 /* Memory layout defined externally (e.g. memory.x) */
 INCLUDE memory.x
-
 /* Default abort entry point. If no abort symbol is provided, then abort maps to _default_abort. */
 EXTERN(_default_abort);
 PROVIDE(abort = _default_abort);
@@ -83,9 +82,6 @@ PROVIDE(DefaultHandler = abort);
    Note, however, that this provided implementation cannot be overwritten. We use PROVIDE
    to avoid compilation errors in direct mode, not to allow users to overwrite the symbol. */
 PROVIDE(_start_DefaultHandler_trap = _start_trap);
-
-PROVIDE(_stext = ORIGIN(FLASH));
-PROVIDE(_stack_start = ORIGIN(RAM) + LENGTH(RAM));
 PROVIDE(_max_hart_id = 0); /* TODO: Should be 1 for dual core hazard3 present in pico 2(w) */
 PROVIDE(_hart_stack_size = SIZEOF(.stack) / (_max_hart_id + 1));
 PROVIDE(_heap_size = 0);
@@ -208,6 +204,12 @@ SECTIONS
     __erodata = .;
   } > FLASH
 
+  .stack (NOLOAD) : ALIGN(8) {
+    _stack_base = .;
+    . = ORIGIN(STACK) + LENGTH(STACK);
+    _stack_start = .;
+  } >STACK
+
   .data : ALIGN(4)
   {
     . = ALIGN(4);
@@ -256,22 +258,8 @@ SECTIONS
     __euninit = .;
   } > RAM
 
-  /* fictitious region that represents the memory available for the heap */
-  .heap (NOLOAD) : ALIGN(4)
-  {
-    __sheap = .;
-    . += _heap_size;
-    . = ALIGN(4);
-    __eheap = .;
-  } > RAM
-
-  /* fictitious region that represents the memory available for the stack */
-  .stack (NOLOAD) :
-  {
-    __estack = .;
-    . = ABSOLUTE(_stack_start);
-    __sstack = .;
-  } > RAM
+  /* Place the heap right after `.uninit` in RAM */
+  PROVIDE(__sheap = __euninit);
 
   /* fake output .got section */
   /* Dynamic relocations are unsupported. This section is only used to detect
