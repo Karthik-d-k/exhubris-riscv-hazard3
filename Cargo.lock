@@ -1100,7 +1100,7 @@ version = "0.1.0"
 dependencies = [
  "cortex-m",
  "cortex-m-rt",
- "kern 0.1.0 (git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes)",
+ "kern 0.1.0",
  "rp235x-pac",
  "sha2-const-stable",
 ]
