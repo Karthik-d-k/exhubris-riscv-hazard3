@@ -34,37 +34,7 @@
 /* Memory layout defined externally (e.g. memory.x) */
 INCLUDE memory.x
 
-SECTIONS {
-    /* ### Boot ROM info
-    *
-    * Goes after .header, to keep it in the first 4K of flash
-    * where the Boot ROM (and picotool) can find it
-    */
-    .start_block : ALIGN(4)
-    {
-        __start_block_addr = .;
-        KEEP(*(.start_block));
-        KEEP(*(.boot_info));
-    } > FLASH
-
-} INSERT AFTER .header;
-
-/* move .text to start /after/ the boot info */
-_stext = ADDR(.start_block) + SIZEOF(.start_block);
-
-SECTIONS {
-    /* ### Boot ROM extra info
-    *
-    * Goes after everything in our program, so it can contain a signature.
-    */
-    .end_block : ALIGN(4)
-    {
-        __end_block_addr = .;
-        KEEP(*(.end_block));
-        __flash_binary_end = .;
-    } > FLASH
-
-} INSERT AFTER .uninit;
+ENTRY(_start);
 
 /* Default abort entry point. If no abort symbol is provided, then abort maps to _default_abort. */
 EXTERN(_default_abort);
@@ -194,18 +164,18 @@ SECTIONS
   {
     ASSERT(. == ALIGN(_HUBRIS_IMAGE_HEADER_ALIGN), "error: header alignment is invalid");
     HEADER = .;
+    KEEP(*(.start_block));
     . = . + _HUBRIS_IMAGE_HEADER_SIZE;
   } > VECTORS
 
-  .text _stext : ALIGN(4)
+  .text : ALIGN(4)
   {
+    _stext = .;
     __stext = .;
 
     /* Put reset handler first in .text section so it ends up as the entry */
     /* point of the program. */
     KEEP(*(.init));
-    . = ALIGN(4);
-    KEEP(*(.start_block));
     . = ALIGN(4);
     KEEP(*(.trap.vector));   /* for _trap_vector (vectored mode only) */
     KEEP(*(.trap.start));    /* for _start_trap routine */
