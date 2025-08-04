@@ -12,10 +12,10 @@
 
 - `PROVIDE` is used to provide default values that can be overridden by a user linker script
 
-- `${ARCH_WIDTH}` is replaced by `4` (TODO: should be 32 acc to riscv-rt crate ??)
+- `${ARCH_WIDTH}` is replaced by `32` (TODO: why not 4 ??)
 - `${INCLUDE_LINKER_FILES}` is replaced by contents of `exceptions.x`, `interrupts.x` 
   and added `INCLUDE device.x` from riscv-rt crate.
-    > This is similar to `cargo add riscv-rt -F device`
+    > This is similar to `cargo add riscv-rt` and `cargo add rp235x-pac -F rt`
 
 - REGION_ALIAS are replaced in this file as mentioned below.
     - REGION_ALIAS("REGION_TEXT", FLASH);
@@ -26,15 +26,20 @@
     - REGION_ALIAS("REGION_STACK", RAM);
 
 - On alignment: it's important for correctness that the VMA boundaries of both .bss and .data *and*
-  the LMA of .data are all `4`-byte aligned. These alignments are assumed by the RAM
-  initialization routine. There's also a second benefit: `4`-byte aligned boundaries
+  the LMA of .data are all `32`-byte aligned. These alignments are assumed by the RAM
+  initialization routine. There's also a second benefit: `32`-byte aligned boundaries
   means that you won't see "Address (..) is out of bounds" in the disassembly produced by `objdump`.
 */
 
 /* Memory layout defined externally (e.g. memory.x) */
 INCLUDE memory.x
 
-ENTRY(_start);
+/* # Entry point: RP2350 Datasheet, Section 5.9.5.2. Minimum RISC-V IMAGE_DEF
+Bootrom will enter the binary at its lowest address,
+which is the default behaviour on RISC-V. This default entry point can be overridden by a
+`PICOBIN_BLOCK_ITEM_1BS_ENTRY_POINT` item. Note that `PICOBIN_BLOCK_ITEM_1BS_VECTOR_TABLE` is not valid on RISC-V, 
+as unlike Cortex-M the RISC-V vector table does not define the program entry point.
+*/
 
 /* Default abort entry point. If no abort symbol is provided, then abort maps to _default_abort. */
 EXTERN(_default_abort);
@@ -141,19 +146,22 @@ PROVIDE(_start_MachineTimer_trap = _start_DefaultHandler_trap);
 PROVIDE(_start_SupervisorExternal_trap = _start_DefaultHandler_trap);
 PROVIDE(_start_MachineExternal_trap = _start_DefaultHandler_trap);
 
-/* Device-specific exception and interrupt handlers */
-INCLUDE device.x
-
 /* $$$$> END  : Contents from ${INCLUDE_LINKER_FILES} <$$$$ */
 
 SECTIONS
 {
-  /* TODO: do we need this ?? */
-  /* .text.dummy (NOLOAD) : */
-  /* { */
-    /* This section is intended to make _stext address work */
-    /* . = ABSOLUTE(_stext); */
-  /* } > FLASH */
+    /* Initial Stack Pointer (SP) value */
+    LONG(_stack_start);
+
+    /* ### Boot ROM info
+      Goes in VECTORS, to keep it in the first 4K of flash
+      where the Boot ROM (and picotool) can find it
+    */
+    .start_block : ALIGN(4)
+    {
+        __start_block_addr = .;
+        KEEP(*(.start_block));
+    } > VECTORS
 
   /* Header containing data needed by the bootloader.  We specify
      _HUBRIS_IMAGE_HEADER_SIZE and _HUBRIS_IMAGE_HEADER_ALIGN in memory.x at
@@ -200,10 +208,10 @@ SECTIONS
     /* We move this into a special section so we can ensure it is always
        included in the build */
     KEEP(*(.hubris_id));
-    /* 4-byte align the end (VMA) of this section.
+    /* 32-byte align the end (VMA) of this section.
        This is required by LLD to ensure the LMA of the following .data
        section will have the correct alignment. */
-    . = ALIGN(4);
+    . = ALIGN(32);
     __erodata = .;
   } > FLASH
 
@@ -213,9 +221,9 @@ SECTIONS
     _stack_start = .;
   } >STACK
 
-  .data : ALIGN(4)
+  .data : ALIGN(32)
   {
-    . = ALIGN(4);
+    . = ALIGN(32);
     __sdata = .;
 
     /* Must be called __global_pointer$ for linker relaxations to work. */
@@ -228,15 +236,15 @@ SECTIONS
   /* Allow sections from user `memory.x` injected using `INSERT AFTER .data` to
    * use the .data loading mechanism by pushing __edata. Note: do not change
    * output region or load region in those user sections! */
-  . = ALIGN(4);
+  . = ALIGN(32);
   __edata = .;
   
   /* LMA of .data */
   __sidata = LOADADDR(.data);
 
-  .bss (NOLOAD) : ALIGN(4)
+  .bss (NOLOAD) : ALIGN(32)
   {
-    . = ALIGN(4);
+    . = ALIGN(32);
     __sbss = .;
 
     *(.sbss .sbss.* .bss .bss.*);
@@ -245,19 +253,19 @@ SECTIONS
   /* Allow sections from user `memory.x` injected using `INSERT AFTER .bss` to
    * use the .bss zeroing mechanism by pushing __ebss. Note: do not change
    * output region or load region in those user sections! */
-  . = ALIGN(4);
+  . = ALIGN(32);
   __ebss = .;
 
   /* Uninitialized data segment. In contrast with .bss, .uninit is not initialized to zero by
    * the runtime, and might contain residual data from previous executions or random values
    * if not explicitly initialized. While .bss and .uninit are different sections, they are
    * both allocated at RAM, as their purpose is similar. */
-  .uninit (NOLOAD) : ALIGN(4)
+  .uninit (NOLOAD) : ALIGN(32)
   {
-    . = ALIGN(4);
+    . = ALIGN(32);
     __suninit = .;
     *(.uninit .uninit.*);
-    . = ALIGN(4);
+    . = ALIGN(32);
     __euninit = .;
   } > RAM
 
@@ -274,6 +282,9 @@ SECTIONS
   }
 }
 
+/* Device-specific exception and interrupt handlers */
+INCLUDE device.x
+
 /* Do not exceed this mark in the error messages above                                    | */
 ASSERT(ORIGIN(FLASH) % 4 == 0, "
 ERROR(riscv-rt): the start of the FLASH must be 4-byte aligned");
@@ -281,8 +292,8 @@ ERROR(riscv-rt): the start of the FLASH must be 4-byte aligned");
 ASSERT(ORIGIN(FLASH) % 4 == 0, "
 ERROR(riscv-rt): the start of the FLASH must be 4-byte aligned");
 
-ASSERT(ORIGIN(RAM) % 4 == 0, "
-ERROR(riscv-rt): the start of the RAM must be 4-byte aligned");
+ASSERT(ORIGIN(RAM) % 32 == 0, "
+ERROR(riscv-rt): the start of the RAM must be 32-byte aligned");
 
 ASSERT(ORIGIN(RAM) % 4 == 0, "
 ERROR(riscv-rt): the start of the RAM must be 4-byte aligned");
@@ -293,14 +304,14 @@ ERROR(riscv-rt): the start of the RAM must be 4-byte aligned");
 ASSERT(_stext % 4 == 0, "
 ERROR(riscv-rt): `_stext` must be 4-byte aligned");
 
-ASSERT(__sdata % 4 == 0 && __edata % 4 == 0, "
-BUG(riscv-rt): .data is not 4-byte aligned");
+ASSERT(__sdata % 32 == 0 && __edata % 32 == 0, "
+BUG(riscv-rt): .data is not 32-byte aligned");
 
-ASSERT(__sidata % 4 == 0, "
-BUG(riscv-rt): the LMA of .data is not 4-byte aligned");
+ASSERT(__sidata % 32 == 0, "
+BUG(riscv-rt): the LMA of .data is not 32-byte aligned");
 
-ASSERT(__sbss % 4 == 0 && __ebss % 4 == 0, "
-BUG(riscv-rt): .bss is not 4-byte aligned");
+ASSERT(__sbss % 32 == 0 && __ebss % 32 == 0, "
+BUG(riscv-rt): .bss is not 32-byte aligned");
 
 ASSERT(__sheap % 4 == 0, "
 BUG(riscv-rt): start of .heap is not 4-byte aligned");
