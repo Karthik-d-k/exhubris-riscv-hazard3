@@ -5,3 +5,7 @@
 scratchpad.md
 *.elf
 *.log
+*.hex
+*.bin
+*.txt
+task/blinky
