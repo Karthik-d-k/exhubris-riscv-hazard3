@@ -60,12 +60,15 @@ SECTIONS
 
   __vector_size = SIZEOF(.vector_table);
 
-  /* ### Boot ROM info */
-  .start_block :
-  {
-    __start_block_addr = .;
-    KEEP(*(.start_block));
-  }
+    /* ### Boot ROM info
+      Goes in VECTORS, to keep it in the first 4K of flash
+      where the Boot ROM (and picotool) can find it
+    */
+    .start_block : ALIGN(4)
+    {
+        __start_block_addr = .;
+        KEEP(*(.start_block));
+    } > VECTORS
 
   /* Header containing data needed by the bootloader.  We specify
      _HUBRIS_IMAGE_HEADER_SIZE and _HUBRIS_IMAGE_HEADER_ALIGN in memory.x at
