@@ -12,7 +12,7 @@
 // gets linked in.
 use rp235x_pac as _;
 
-use crate::block::ImageDef;
+// use crate::block::ImageDef;
 use cortex_m_rt::entry;
 
 /// A Block as understood by the Boot ROM.
