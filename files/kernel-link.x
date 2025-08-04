@@ -50,10 +50,6 @@ SECTIONS
     KEEP(*(.vector_table.reset_vector)); /* this is the `__RESET_VECTOR` symbol */
     __reset_vector = .;
 
-    /* ### Boot ROM info */
-    __start_block_addr = .;
-    KEEP(*(.start_block));
-
     /* Exceptions */
     KEEP(*(.vector_table.exceptions)); /* this is the `__EXCEPTIONS` symbol */
     __eexceptions = .;
@@ -63,6 +59,14 @@ SECTIONS
   } > VECTORS
 
   __vector_size = SIZEOF(.vector_table);
+
+  /* ### Boot ROM info */
+  .start_block :
+  {
+    __start_block_addr = .;
+    KEEP(*(.start_block));
+  }
+
   /* Header containing data needed by the bootloader.  We specify
      _HUBRIS_IMAGE_HEADER_SIZE and _HUBRIS_IMAGE_HEADER_ALIGN in memory.x at
      build time, then reserve enough space for the header here in the linker
