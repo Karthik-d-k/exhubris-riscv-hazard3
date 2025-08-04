@@ -31,12 +31,13 @@ pub struct ImageDefBlock {
 }
 
 /// Tell the Boot ROM about our application
-/// Refer RP2350 Datasheet, Section: 5.9.5.2. Minimum RISC-V IMAGE_DEF
+/// Refer RP2350 Datasheet, 5.9.5.1. Minimum Arm IMAGE_DEF
+/// TODO: Assuming CRIT1.SECURE_BOOT_ENABLE is clear
 #[link_section = ".start_block"]
 #[used]
 pub static IMAGE_DEF: ImageDefBlock = ImageDefBlock {
     marker_start: 0xffffded3,
-    item: 0x11010142,
+    item: 0x10210142,
     length: 0x000001ff,
     offset: 0x00000000,
     marker_end: 0xab123579,
