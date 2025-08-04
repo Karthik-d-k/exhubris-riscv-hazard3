@@ -150,9 +150,6 @@ PROVIDE(_start_MachineExternal_trap = _start_DefaultHandler_trap);
 
 SECTIONS
 {
-    /* Initial Stack Pointer (SP) value */
-    LONG(_stack_start);
-
     /* ### Boot ROM info
       Goes in VECTORS, to keep it in the first 4K of flash
       where the Boot ROM (and picotool) can find it
