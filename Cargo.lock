@@ -493,6 +493,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "cortex-m-semihosting"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c23234600452033cc77e4b761e740e02d2c4168e11dbf36ab14a0f58973592b0"
+dependencies = [
+ "cortex-m",
+]
+
+[[package]]
 name = "cpufeatures"
 version = "0.2.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1039,6 +1048,7 @@ dependencies = [
  "call_rustfmt 0.1.0",
  "cfg-if",
  "cortex-m",
+ "cortex-m-semihosting",
  "indexmap 1.9.3",
  "kerncore 0.1.0",
  "phash 0.1.0",
