@@ -54,13 +54,18 @@ pub fn determine_build_env() -> miette::Result<BuildEnv> {
         .to_string();
 
     let mut linker_path = sysroot.clone();
+    let exe_name = if cfg!(windows) {
+        "ld.lld.exe"
+    } else {
+        "ld.lld"
+    };
     linker_path.extend([
         "lib",
         "rustlib",
         &host_triple,
         "bin",
         "gcc-ld",
-        "ld.lld",
+        exe_name,
     ]);
     if !std::fs::exists(&linker_path).into_diagnostic()? {
         bail!("linker not available at: {}", linker_path.display());

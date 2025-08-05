@@ -102,7 +102,12 @@ fn prepare_run_command(
             let toolsdir = storage.join("git")
                 .join(base64::prelude::BASE64_STANDARD.encode(repo))
                 .join(rev);
-            let binary_path = toolsdir.join("bin").join("hubris-build");
+            let exe_name = if cfg!(windows) {
+                "hubris-build.exe"
+            } else {
+                "hubris-build"
+            };
+            let binary_path = toolsdir.join("bin").join(exe_name);
 
             ExecStrategy::CargoInstall {
                 binary_path,
