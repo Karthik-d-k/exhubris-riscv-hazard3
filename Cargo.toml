@@ -1,23 +1,11 @@
 [workspace]
 resolver = "2"
 members = [
-    "kernel-generic-cortex-m33",
-    "kernel-generic-hazard3",
-    "kernel-generic-stm32g031",
-    "kernel-generic-stm32u575",
-    "task/blinky",
-    "task/idle",
-    "task/ping",
-    "task/pong",
-    "drv/stm32xx-sys",
-    "drv/uart-echo",
-    "tools/build",
-    "tools/hubake",
-    "tools/alloc",
-    "sys/userlib",
-    "sys/kipc",
-    "sys/num-tasks",
-    "task/minisuper",
+    "kernel-generic-*",
+    "task/*",
+    "drv/*",
+    "tools/*",
+    "sys/*",
 ]
 
 [workspace.dependencies]
