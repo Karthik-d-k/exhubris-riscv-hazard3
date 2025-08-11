@@ -29,12 +29,22 @@ task super {
     priority 0
 }
 
+// blinky task. Blinks an external led
+task blinky {
+    workspace-crate blinky
+    stack-size 128 // 256 bytes on a part with an FPU
+    priority 1
+    uses-peripheral sio
+    uses-peripheral io_bank0
+    uses-peripheral pads_bank0
+}
+
 // Idle task. Every application needs one, few applications want to write their
 // own. We pull in a standard one from git:
 task idle {
     workspace-crate idle
     stack-size 32
-    priority 4
+    priority 2
     // This makes Humility work a _lot_ better.
     features insomniac
 }
