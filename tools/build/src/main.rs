@@ -345,7 +345,11 @@ fn main() -> miette::Result<()> {
                 print_allocations(&app, &allocs.by_region(), &ksizes);
             }
 
-            std::fs::remove_file(tmpdir.join("memory.x")).into_diagnostic()?;
+            // Save a backup copy of the kernel memory fragment and delete original file
+            let backup_path = tmpdir.join("memory-kernel.x");
+            let memory_frag_path = tmpdir.join("memory.x");
+            std::fs::copy(&memory_frag_path, &backup_path).into_diagnostic()?;
+            std::fs::remove_file(memory_frag_path).into_diagnostic()?;
 
             // Construct a bundle containing the output.
             let out = out.unwrap_or_else(|| root.join(format!("{}-build.zip", app.name.value())));

@@ -167,6 +167,11 @@ fn relink(
     if !ldstatus.success() {
         return Err(miette!("command failed"));
     }
+    
+    // Save a backup copy of the memory fragment with the task name
+    let backup_filename = format!("memory-{}.x", def.name);
+    let backup_path = outpath.parent().unwrap().join(backup_filename);
+    std::fs::copy(&memory_frag_path, &backup_path).into_diagnostic()?;
 
     // Delete the memory fragment file, to avoid surprises.
     std::fs::remove_file(memory_frag_path).into_diagnostic()?;
