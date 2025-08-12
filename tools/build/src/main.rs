@@ -376,6 +376,12 @@ fn main() -> miette::Result<()> {
                 let name = dirent.file_name();
                 let name = name.into_string().unwrap();
                 let path = dirent.path();
+
+                // Skip linker script files
+                if path.extension().map_or(false, |ext| ext == "x") {
+                    continue;
+                }
+
                 all_paths.push(path.clone());
                 let bytes = std::fs::read(&path).into_diagnostic()?;
                 let elf = goblin::elf::Elf::parse(&bytes).into_diagnostic()?;
