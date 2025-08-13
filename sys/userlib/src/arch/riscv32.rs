@@ -6,8 +6,8 @@
 //! 2. To make `userlib` compile on other platforms for `rust-analyzer`.
 
 use crate::{
-    Lease, Message, MessageOrNotification, ReplyFaultReason, ResponseCode, TaskDeath, TaskId,
-    TimerSettings,
+    Lease, Message, MessageOrNotification, ReplyFaultReason, ResponseCode, Sysnum, TaskDeath,
+    TaskId, TimerSettings,
 };
 use core::arch::global_asm;
 use core::mem::MaybeUninit;
@@ -96,6 +96,19 @@ pub fn sys_send_to_kernel(
 ) -> (ResponseCode, usize) {
     let _ = (operation, outgoing, incoming, leases);
     unimplemented!()
+}
+
+/// The actual return register layout after a call to `recv`.
+///
+/// This lets us blit the return registers directly into this struct from the
+/// assembly stub without having to think too much.
+#[repr(C)]
+struct AbiRecvMessage {
+    sender: u32,
+    operation_or_notification: u32,
+    sent_length: usize,
+    reply_capacity: usize,
+    lease_count: usize,
 }
 
 /// Receives a message from a waiting caller.
@@ -202,9 +215,62 @@ pub fn sys_recv_msg_open(incoming: &mut [MaybeUninit<u8>]) -> Message<'_> {
 /// This is logically equivalent to `sys_recv(&mut [], notification_mask,
 /// Some(TaskId::KERNEL))`, but is implemented without any of the code related
 /// to error checking or message handling.
+#[inline(always)]
 pub fn sys_recv_notification(notification_mask: u32) -> u32 {
-    let _ = notification_mask;
-    unimplemented!()
+    let mut out = MaybeUninit::<AbiRecvMessage>::uninit();
+    let retval = unsafe {
+        sys_recv_stub(
+            core::ptr::null_mut(),
+            0,
+            notification_mask,
+            0x8000_0000 | u32::from(TaskId::KERNEL.0),
+            out.as_mut_ptr(),
+        )
+    };
+
+    // This can't actually fail.
+    let _ = retval;
+
+    let rm = unsafe { out.assume_init() };
+    rm.operation_or_notification
+}
+
+cfg_if::cfg_if! {
+    if #[cfg(hubris_target = "riscv32imac-unknown-none-elf")] {
+        global_asm!("
+        .section .text.sys_recv_stub
+        .globl sys_recv_stub
+        .type sys_recv_stub,function
+        sys_recv_stub:
+            # Preserve output buffer pointer in callee-save register, ensuring
+            # it is saved on the stack, which is kept 16-byte aligned.
+            addi sp, sp, -4*4
+            sw s2, 0*4(sp)
+            mv s2, a4
+
+            # Load the constant syscall number.
+            li a7, {sysnum}
+
+            # To the kernel!
+            ecall
+
+            # Write all the results out into the raw output buffer.
+            sw a1, 0*4(s2)
+            sw a2, 1*4(s2)
+            sw a3, 2*4(s2)
+            sw a4, 3*4(s2)
+            sw a5, 4*4(s2)
+
+            # Restore callee-save register and stack pointer and return.
+            lw s2, 0*4(sp)
+            addi sp, sp, 4*4
+            ret
+            ",
+            sysnum = const Sysnum::Recv as u32,
+        );
+    } else {
+        compile_error!("unrecognized target for sys_recv_stub");
+    }
 }
 
 /// Replies to a previously received message, unblocking the sender.
@@ -394,6 +460,31 @@ pub fn sys_borrow_info(lender: TaskId, index: usize) -> Option<crate::BorrowInfo
 pub fn sys_post(task: TaskId, notifications: u32) -> Result<(), TaskDeath> {
     let _ = (task, notifications);
     unimplemented!()
+}
+
+extern "C" {
+    /// Low-level recv syscall stub.
+    ///
+    /// # Safety
+    ///
+    /// To use this safely, the incoming base/len pointers must meet the
+    /// validity rules for a slice reference. The easiest way to ensure this is
+    /// to derive them directly from a slice reference.
+    ///
+    /// This also implies that the `incoming` slice and `out` pointee may not
+    /// overlap.
+    ///
+    /// As an optimization, the memory pointed to by `out` need not be
+    /// initialized, and so it is safe to have derived the `out` pointer from a
+    /// `MaybeUninit<AbiRecvMessage>`. Once this returns, you can assume the
+    /// memory has been initialized.
+    fn sys_recv_stub(
+        incoming_base: *mut u8,
+        incoming_len: usize,
+        notification_mask: u32,
+        sender_bits: u32,
+        out: *mut AbiRecvMessage,
+    ) -> u32;
 }
 
 cfg_if::cfg_if! {
