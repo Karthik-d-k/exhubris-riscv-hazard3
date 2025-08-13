@@ -1,14 +1,11 @@
 //! # GPIO 'Blinky' Example
 //!
-//! This application demonstrates how to control a GPIO pin on the rp235x.
-//!
-//! It may need to be adapted to your particular board layout and/or pin assignment.
-//!
-//! See the `Cargo.toml` file for Copyright and license details.
+//! This application demonstrates how to control a GPIO pin to blink on the rp235x.
 
 #![no_std]
 #![no_main]
 
+use riscv::asm::delay;
 // Ensure we halt the program on panic (if we don't mention this crate it won't
 // be linked)
 use userlib as _;
@@ -26,5 +23,11 @@ fn main() -> ! {
     loop {
         // Turn LED on
         pico_led_set(&gpio_peripherals, LED_PIN, true);
+        // Wait for a while
+        delay(1_20_30_000);
+        // Turn LED off
+        pico_led_set(&gpio_peripherals, LED_PIN, false);
+        // Wait for a while
+        delay(1_20_30_000);
     }
 }
