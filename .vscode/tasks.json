@@ -38,6 +38,16 @@
                 "isDefault": true
             },
             "problemMatcher": []
+        },
+        {
+            "label": "Picotool reboot",
+            "type": "shell",
+            "command": "picotool reboot -u -c riscv",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
         }
     ]
 }

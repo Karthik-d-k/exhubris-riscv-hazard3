@@ -2,36 +2,26 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "preLaunchTask": "Start OpenOCD",
-            "executable": "final.elf",
-            "name": "Hubris Riscv Debug",
-            "cwd": "${workspaceFolder}",
-            "request": "attach",
-            "type": "cortex-debug",
-            "servertype": "external",
-            "gdbPath": "riscv32-unknown-elf-gdb.exe",
-            "svdFile": "${workspaceFolder}/app/demo-hazard3/RP2350.svd",
-            "gdbTarget": "localhost:3341",
-            "showDevDebugOutput": "parsed"
-        },
-        {
-            "preLaunchTask": "hubake build",
+            // "preLaunchTask": "Start OpenOCD",
             "type": "probe-rs-debug",
             "request": "launch",
             "name": "probe-rs-debug",
+            //!MODIFY ... can be a server that is remote from the VSCode session, but local to the probe
+            //"server": "127.0.0.1:50000",
             "cwd": "${workspaceFolder}",
             //!MODIFY (or remove)
-            "speed": 500,
+            "speed": 10000,
             //!MODIFY (or remove)
-            "probe": "2e8a:000c",
+            //"probe": "2e8a:000c",
             "runtimeExecutable": "probe-rs",
             "runtimeArgs": [
                 "dap-server"
             ],
             //!MODIFY
             "chip": "RP235x",
+            "connectUnderReset": false,
             "flashingConfig": {
-                "flashingEnabled": true,
+                "flashingEnabled": false,
                 "haltAfterReset": true,
                 "formatOptions": {
                     //!MODIFY (or remove). Valid values are: 'bin', 'hex', 'elf'(default), 'idf'
@@ -42,7 +32,7 @@
                 {
                     "coreIndex": 0,
                     //!MODIFY
-                    "programBinary": "hazard3-build/img/final.elf",
+                    "programBinary": ".work/hazard3/final/kernel",
                     //!MODIFY
                     "svdFile": "C:\\Users\\adt8kor\\wws\\riscv\\hubris-riscv-hazard3\\chips\\rp2350-hazard3\\RP2350.svd"
                 }
@@ -50,10 +40,37 @@
             "env": {
                 //!MODIFY (or remove)
                 // If you set this variable, check the VSCode console log window for the location of the log file.
-                "RUST_LOG": "info"
+                "RUST_LOG": "debug"
             },
             // Info, Debug
             "consoleLogLevel": "Debug"
-        }
+        },
+        {
+            "preLaunchTask": "Picotool reboot",
+            "name": "Pico Debug (Cortex-Debug)",
+            "cwd": "${workspaceFolder}",
+            "executable": ".work/hazard3/final/kernel",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "serverpath": "openocd.exe",
+            "gdbPath": "riscv32-unknown-elf-gdb.exe",
+            "device": "RP235X",
+            "configFiles": [
+                "app/demo-hazard3/openocd.cfg"
+            ],
+            "svdFile": "C:\\Users\\adt8kor\\wws\\riscv\\hubris-riscv-hazard3\\chips\\rp2350-hazard3\\RP2350.svd",
+            "runToEntryPoint": "main",
+            // Fix for no_flash binaries, where monitor reset halt doesn't do what is expected
+            // Also works fine for flash binaries
+            "overrideLaunchCommands": [
+                // "monitor reset init",
+            ],
+            "openOCDLaunchCommands": [
+                "adapter speed 5000",
+                "set USE_CORE rv0",
+                "program .work/hazard3/final/kernel verify",
+            ]
+        },
     ]
 }
