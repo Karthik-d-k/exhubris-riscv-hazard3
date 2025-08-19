@@ -6,8 +6,8 @@
 //! 2. To make `userlib` compile on other platforms for `rust-analyzer`.
 
 use crate::{
-    Lease, Message, MessageOrNotification, ReplyFaultReason, ResponseCode, Sysnum, TaskDeath,
-    TaskId, TimerSettings,
+    AbiLease, Lease, Message, MessageOrNotification, ReplyFaultReason, ResponseCode, Sysnum,
+    TaskDeath, TaskId, TimerSettings,
 };
 use core::arch::global_asm;
 use core::mem::MaybeUninit;
@@ -94,8 +94,53 @@ pub fn sys_send_to_kernel(
     incoming: &mut [u8],
     leases: &mut [Lease<'_>],
 ) -> (ResponseCode, usize) {
-    let _ = (operation, outgoing, incoming, leases);
-    unimplemented!()
+    let target_and_operation = u32::from(TaskId::KERNEL.0) << 16 | u32::from(operation);
+    let ret64 = unsafe {
+        sys_send_stub(
+            target_and_operation,
+            outgoing.as_ptr(),
+            outgoing.len(),
+            incoming.as_mut_ptr(),
+            incoming.len(),
+            leases.as_mut_ptr().cast(),
+            leases.len(),
+        )
+    };
+    let retval = ResponseCode(ret64 as u32);
+    (retval, (ret64 >> 32) as usize)
+}
+
+cfg_if::cfg_if! {
+    if #[cfg(hubris_target = "riscv32imac-unknown-none-elf")] {
+        global_asm!("
+        .section .text.sys_send_stub
+        .globl sys_send_stub
+        .type sys_send_stub,function
+        sys_send_stub:
+            # Load in args from the struct.
+            lw a6, 6*4(a0)
+            lw a5, 5*4(a0)
+            lw a4, 4*4(a0)
+            lw a3, 3*4(a0)
+            lw a2, 2*4(a0)
+            lw a1, 1*4(a0)
+            lw a0, 0*4(a0)
+
+            # Load the constant syscall number.
+            li a7, {sysnum}
+
+            # To the kernel!
+            ecall
+
+            # Results are placed into the correct registers by the kernel, we can
+            # just return now.
+            ret
+        ",
+        sysnum = const Sysnum::Send as u32,
+        );
+    } else {
+        compile_error!("unrecognized target for sys_send_stub");
+    }
 }
 
 /// The actual return register layout after a call to `recv`.
@@ -463,6 +508,33 @@ pub fn sys_post(task: TaskId, notifications: u32) -> Result<(), TaskDeath> {
 }
 
 extern "C" {
+    /// Low-level send syscall stub.
+    ///
+    /// # Safety
+    ///
+    /// To use this safely, all of the (base,len) pointers must meet the
+    /// validity rules for slice references. The easiest way to ensure this is
+    /// to derive them directly from slice references.
+    ///
+    /// This also implies that the outgoing, incoming, and lease regions may not
+    /// overlap.
+    ///
+    /// As an optimization, the memory pointed to by `incoming_base` need not be
+    /// initialized, and so it is safe to have derived the `incoming_base`
+    /// pointer from an array of `MaybeUninit<u8>`. Once this returns, you can
+    /// assume that the _prefix_ of the `incoming` slice up to the response
+    /// length has been initialized. The tail of that buffer may _not_ have been
+    /// initialized.
+    fn sys_send_stub(
+        target_and_operation: u32,
+        outgoing_base: *const u8,
+        outgoing_len: usize,
+        incoming_base: *mut u8,
+        incoming_len: usize,
+        lease_base: *const AbiLease,
+        lease_count: usize,
+    ) -> u64;
+
     /// Low-level recv syscall stub.
     ///
     /// # Safety

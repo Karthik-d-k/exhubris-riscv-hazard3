@@ -4,8 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-#userlib = {workspace = true, features = ["no-panic"]}
-userlib = {workspace = true} # keep no-panic for now, until we complete the stubs in userlib for riscv
+userlib = {workspace = true, features = ["no-panic"]}
 hubris-num-tasks.workspace = true
 kipc.workspace = true
 
