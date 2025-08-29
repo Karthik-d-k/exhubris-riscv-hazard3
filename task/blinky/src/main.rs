@@ -5,7 +5,12 @@
 #![no_std]
 #![no_main]
 
-use riscv::asm::delay;
+#[cfg(target_arch = "riscv32")]
+use riscv::asm;
+
+#[cfg(target_arch = "arm")]
+use cortex_m::asm;
+
 // Ensure we halt the program on panic (if we don't mention this crate it won't
 // be linked)
 use userlib as _;
@@ -24,10 +29,10 @@ fn main() -> ! {
         // Turn LED on
         pico_led_set(&gpio_peripherals, LED_PIN, true);
         // Wait for a while
-        delay(1_20_30_000);
+        asm::delay(1_20_30_000);
         // Turn LED off
         pico_led_set(&gpio_peripherals, LED_PIN, false);
         // Wait for a while
-        delay(1_20_30_000);
+        asm::delay(1_20_30_000);
     }
 }
