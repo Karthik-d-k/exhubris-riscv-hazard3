@@ -10,7 +10,7 @@
 
 // We have to do this if we don't otherwise use it to ensure its vector table
 // gets linked in.
-use rp235x_pac as _;
+use rp235x_pac::OTP_DATA_RAW;
 
 // use crate::block::ImageDef;
 use cortex_m_rt::entry;
@@ -43,8 +43,14 @@ pub static IMAGE_DEF: ImageDefBlock = ImageDefBlock {
     marker_end: 0xab123579,
 };
 
+pub fn reset_secure_boot() {
+    let crit1 = unsafe { OTP_DATA_RAW::steal() };
+    crit1.crit1().reset();
+}
+
 #[entry]
 fn main() -> ! {
+    reset_secure_boot();
     // Default boot speed, until we bother raising it:
     const CYCLES_PER_MS: u32 = 8_000;
 
