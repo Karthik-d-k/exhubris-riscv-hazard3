@@ -1,4 +1,4 @@
-use std::{path::{Path, PathBuf}, process::Command};
+use std::{env::consts::EXE_SUFFIX, path::{Path, PathBuf}, process::Command};
 
 use anyhow::{bail, Context as _, anyhow};
 use base64::Engine;
@@ -102,11 +102,7 @@ fn prepare_run_command(
             let toolsdir = storage.join("git")
                 .join(base64::prelude::BASE64_STANDARD.encode(repo))
                 .join(rev);
-            let exe_name = if cfg!(windows) {
-                "hubris-build.exe"
-            } else {
-                "hubris-build"
-            };
+            let exe_name = format!("hubris-build{}", EXE_SUFFIX);
             let binary_path = toolsdir.join("bin").join(exe_name);
 
             ExecStrategy::CargoInstall {

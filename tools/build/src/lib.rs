@@ -9,7 +9,7 @@ pub mod cargo;
 pub mod verbose;
 pub mod kconfig;
 
-use std::{ffi::OsStr, path::PathBuf, process::Command};
+use std::{env::consts::EXE_SUFFIX, ffi::OsStr, path::PathBuf, process::Command};
 
 use cargo_metadata::Package;
 use miette::{bail, miette, IntoDiagnostic as _};
@@ -54,18 +54,14 @@ pub fn determine_build_env() -> miette::Result<BuildEnv> {
         .to_string();
 
     let mut linker_path = sysroot.clone();
-    let exe_name = if cfg!(windows) {
-        "ld.lld.exe"
-    } else {
-        "ld.lld"
-    };
+    let exe_name = format!("ld.lld{}", EXE_SUFFIX);
     linker_path.extend([
         "lib",
         "rustlib",
         &host_triple,
         "bin",
         "gcc-ld",
-        exe_name,
+        &exe_name,
     ]);
     if !std::fs::exists(&linker_path).into_diagnostic()? {
         bail!("linker not available at: {}", linker_path.display());
