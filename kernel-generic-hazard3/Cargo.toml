@@ -12,6 +12,6 @@ sha2-const-stable = "0.1"
 [dependencies.hubris-kern]
 package = "kern"
 git = "https://github.com/Karthik-d-k/hubris-riscv-hazard3"
-#branch = "riscv"
+branch = "riscv"
 #path = "../../hubris-riscv-hazard3/sys/kern"
 features = ["stack-watermark"]
