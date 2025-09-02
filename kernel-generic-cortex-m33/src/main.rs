@@ -50,7 +50,7 @@ pub fn reset_secure_boot() {
 
 #[entry]
 fn main() -> ! {
-    reset_secure_boot();
+    // reset_secure_boot();
     // Default boot speed, until we bother raising it:
     const CYCLES_PER_MS: u32 = 8_000;
 
