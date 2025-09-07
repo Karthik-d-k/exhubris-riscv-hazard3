@@ -10,6 +10,5 @@ rp235x-pac = {version = "0.1.0", features = ["rt"]}
 
 [dependencies.hubris-kern]
 package = "kern"
-git = "https://github.com/cbiffle/hubris-fork.git"
-branch = "cbiffle/exhubris-fixes"
-features = ["nano", "stack-watermark"]
+git = "https://github.com/oxidecomputer/hubris"
+branch = "master"
