@@ -9,9 +9,21 @@ source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubr
 dependencies = [
  "bitflags",
  "byteorder",
- "phash",
+ "phash 0.1.0 (git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes)",
  "serde",
  "zerocopy 0.6.6",
+]
+
+[[package]]
+name = "abi"
+version = "0.1.0"
+source = "git+https://github.com/oxidecomputer/hubris?branch=master#b50c3c74e55cf14bc22fb1ef1350844952d1bd9e"
+dependencies = [
+ "bitflags",
+ "byteorder",
+ "phash 0.1.0 (git+https://github.com/oxidecomputer/hubris?branch=master)",
+ "serde",
+ "zerocopy 0.8.27",
 ]
 
 [[package]]
@@ -108,6 +120,14 @@ dependencies = [
 name = "armv8-m-mpu"
 version = "0.1.0"
 source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes#061df2fc76433bbc7cc3931a8981fbd509e35c97"
+dependencies = [
+ "cortex-m",
+]
+
+[[package]]
+name = "armv8-m-mpu"
+version = "0.1.0"
+source = "git+https://github.com/oxidecomputer/hubris?branch=master#b50c3c74e55cf14bc22fb1ef1350844952d1bd9e"
 dependencies = [
  "cortex-m",
 ]
@@ -228,6 +248,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "build-kconfig"
+version = "0.1.0"
+source = "git+https://github.com/oxidecomputer/hubris?branch=master#b50c3c74e55cf14bc22fb1ef1350844952d1bd9e"
+dependencies = [
+ "bitflags",
+ "serde",
+]
+
+[[package]]
 name = "build-util"
 version = "0.1.0"
 source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes#061df2fc76433bbc7cc3931a8981fbd509e35c97"
@@ -238,7 +267,21 @@ dependencies = [
  "serde",
  "serde_json",
  "toml 0.7.8",
- "toml-task",
+ "toml-task 0.1.0 (git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes)",
+]
+
+[[package]]
+name = "build-util"
+version = "0.1.0"
+source = "git+https://github.com/oxidecomputer/hubris?branch=master#b50c3c74e55cf14bc22fb1ef1350844952d1bd9e"
+dependencies = [
+ "anyhow",
+ "indexmap 1.9.3",
+ "ordered-toml",
+ "serde",
+ "serde_json",
+ "toml 0.7.8",
+ "toml-task 0.1.0 (git+https://github.com/oxidecomputer/hubris?branch=master)",
 ]
 
 [[package]]
@@ -278,6 +321,14 @@ dependencies = [
 name = "call_rustfmt"
 version = "0.1.0"
 source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes#061df2fc76433bbc7cc3931a8981fbd509e35c97"
+dependencies = [
+ "anyhow",
+]
+
+[[package]]
+name = "call_rustfmt"
+version = "0.1.0"
+source = "git+https://github.com/oxidecomputer/hubris?branch=master#b50c3c74e55cf14bc22fb1ef1350844952d1bd9e"
 dependencies = [
  "anyhow",
 ]
@@ -605,8 +656,8 @@ dependencies = [
  "stm32-metapac",
  "userlib",
  "utf16_literal",
- "zerocopy 0.8.13",
- "zerocopy-derive 0.8.13",
+ "zerocopy 0.8.27",
+ "zerocopy-derive 0.8.27",
 ]
 
 [[package]]
@@ -618,7 +669,7 @@ dependencies = [
  "idyll_runtime",
  "serde",
  "userlib",
- "zerocopy 0.8.13",
+ "zerocopy 0.8.27",
 ]
 
 [[package]]
@@ -828,7 +879,7 @@ name = "hubris-build"
 version = "0.1.0"
 dependencies = [
  "blake3",
- "build-kconfig",
+ "build-kconfig 0.1.0 (git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes)",
  "cargo_metadata",
  "clap",
  "comfy-table",
@@ -908,7 +959,7 @@ name = "idyll_runtime"
 version = "0.1.0"
 dependencies = [
  "userlib",
- "zerocopy 0.8.13",
+ "zerocopy 0.8.27",
 ]
 
 [[package]]
@@ -1030,28 +1081,58 @@ name = "kern"
 version = "0.1.0"
 source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes#061df2fc76433bbc7cc3931a8981fbd509e35c97"
 dependencies = [
- "abi",
+ "abi 0.1.0 (git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes)",
  "anyhow",
- "armv8-m-mpu",
+ "armv8-m-mpu 0.1.0 (git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes)",
  "bitflags",
- "build-kconfig",
- "build-util",
+ "build-kconfig 0.1.0 (git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes)",
+ "build-util 0.1.0 (git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes)",
  "byteorder",
- "call_rustfmt",
+ "call_rustfmt 0.1.0 (git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes)",
  "cfg-if",
  "cortex-m",
  "indexmap 1.9.3",
- "kerncore",
- "phash",
- "phash-gen",
+ "kerncore 0.1.0 (git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes)",
+ "phash 0.1.0 (git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes)",
+ "phash-gen 0.1.0 (git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes)",
  "proc-macro2",
  "quote",
  "ron",
  "serde",
  "ssmarshal",
  "syn 1.0.109",
- "unwrap-lite",
+ "unwrap-lite 0.1.0 (git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes)",
  "zerocopy 0.6.6",
+]
+
+[[package]]
+name = "kern"
+version = "0.1.0"
+source = "git+https://github.com/oxidecomputer/hubris?branch=master#b50c3c74e55cf14bc22fb1ef1350844952d1bd9e"
+dependencies = [
+ "abi 0.1.0 (git+https://github.com/oxidecomputer/hubris?branch=master)",
+ "anyhow",
+ "armv8-m-mpu 0.1.0 (git+https://github.com/oxidecomputer/hubris?branch=master)",
+ "bitflags",
+ "build-kconfig 0.1.0 (git+https://github.com/oxidecomputer/hubris?branch=master)",
+ "build-util 0.1.0 (git+https://github.com/oxidecomputer/hubris?branch=master)",
+ "byteorder",
+ "call_rustfmt 0.1.0 (git+https://github.com/oxidecomputer/hubris?branch=master)",
+ "cfg-if",
+ "cortex-m",
+ "indexmap 1.9.3",
+ "kerncore 0.1.0 (git+https://github.com/oxidecomputer/hubris?branch=master)",
+ "phash 0.1.0 (git+https://github.com/oxidecomputer/hubris?branch=master)",
+ "phash-gen 0.1.0 (git+https://github.com/oxidecomputer/hubris?branch=master)",
+ "proc-macro2",
+ "quote",
+ "ron",
+ "serde",
+ "ssmarshal",
+ "syn 2.0.90",
+ "unwrap-lite 0.1.0 (git+https://github.com/oxidecomputer/hubris?branch=master)",
+ "zerocopy 0.8.27",
+ "zerocopy-derive 0.8.27",
 ]
 
 [[package]]
@@ -1060,12 +1141,17 @@ version = "0.1.0"
 source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes#061df2fc76433bbc7cc3931a8981fbd509e35c97"
 
 [[package]]
+name = "kerncore"
+version = "0.1.0"
+source = "git+https://github.com/oxidecomputer/hubris?branch=master#b50c3c74e55cf14bc22fb1ef1350844952d1bd9e"
+
+[[package]]
 name = "kernel-generic-cortex-m33"
 version = "0.1.0"
 dependencies = [
  "cortex-m",
  "cortex-m-rt",
- "kern",
+ "kern 0.1.0 (git+https://github.com/oxidecomputer/hubris?branch=master)",
  "rp235x-pac",
 ]
 
@@ -1075,7 +1161,7 @@ version = "0.1.0"
 dependencies = [
  "cortex-m",
  "cortex-m-rt",
- "kern",
+ "kern 0.1.0 (git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes)",
  "stm32-metapac",
 ]
 
@@ -1086,7 +1172,7 @@ dependencies = [
  "cfg-if",
  "cortex-m",
  "cortex-m-rt",
- "kern",
+ "kern 0.1.0 (git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes)",
  "stm32l4",
 ]
 
@@ -1097,7 +1183,7 @@ dependencies = [
  "cfg-if",
  "cortex-m",
  "cortex-m-rt",
- "kern",
+ "kern 0.1.0 (git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes)",
  "stm32-metapac",
 ]
 
@@ -1105,7 +1191,7 @@ dependencies = [
 name = "kipc"
 version = "0.1.0"
 dependencies = [
- "abi",
+ "abi 0.1.0 (git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes)",
  "ssmarshal",
  "userlib",
 ]
@@ -1422,12 +1508,28 @@ version = "0.1.0"
 source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes#061df2fc76433bbc7cc3931a8981fbd509e35c97"
 
 [[package]]
+name = "phash"
+version = "0.1.0"
+source = "git+https://github.com/oxidecomputer/hubris?branch=master#b50c3c74e55cf14bc22fb1ef1350844952d1bd9e"
+
+[[package]]
 name = "phash-gen"
 version = "0.1.0"
 source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes#061df2fc76433bbc7cc3931a8981fbd509e35c97"
 dependencies = [
  "anyhow",
- "phash",
+ "phash 0.1.0 (git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes)",
+ "rand 0.8.5",
+ "rand_chacha",
+]
+
+[[package]]
+name = "phash-gen"
+version = "0.1.0"
+source = "git+https://github.com/oxidecomputer/hubris?branch=master#b50c3c74e55cf14bc22fb1ef1350844952d1bd9e"
+dependencies = [
+ "anyhow",
+ "phash 0.1.0 (git+https://github.com/oxidecomputer/hubris?branch=master)",
  "rand 0.8.5",
  "rand_chacha",
 ]
@@ -2060,6 +2162,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "toml-task"
+version = "0.1.0"
+source = "git+https://github.com/oxidecomputer/hubris?branch=master#b50c3c74e55cf14bc22fb1ef1350844952d1bd9e"
+dependencies = [
+ "anyhow",
+ "indexmap 1.9.3",
+ "ordered-toml",
+ "serde",
+]
+
+[[package]]
 name = "toml_datetime"
 version = "0.6.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2157,6 +2270,11 @@ checksum = "1fc81956842c57dac11422a97c3b8195a1ff727f06e85c84ed2e8aa277c9a0fd"
 name = "unwrap-lite"
 version = "0.1.0"
 source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes#061df2fc76433bbc7cc3931a8981fbd509e35c97"
+
+[[package]]
+name = "unwrap-lite"
+version = "0.1.0"
+source = "git+https://github.com/oxidecomputer/hubris?branch=master#b50c3c74e55cf14bc22fb1ef1350844952d1bd9e"
 
 [[package]]
 name = "userlib"
@@ -2413,11 +2531,11 @@ dependencies = [
 
 [[package]]
 name = "zerocopy"
-version = "0.8.13"
+version = "0.8.27"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "67914ab451f3bfd2e69e5e9d2ef3858484e7074d63f204fd166ec391b54de21d"
+checksum = "0894878a5fa3edfd6da3f88c4805f4c8558e2b996227a3d864f47fe11e38282c"
 dependencies = [
- "zerocopy-derive 0.8.13",
+ "zerocopy-derive 0.8.27",
 ]
 
 [[package]]
@@ -2444,9 +2562,9 @@ dependencies = [
 
 [[package]]
 name = "zerocopy-derive"
-version = "0.8.13"
+version = "0.8.27"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7988d73a4303ca289df03316bc490e934accf371af6bc745393cf3c2c5c4f25d"
+checksum = "88d2b8d9c68ad2b9e4340d7832716a4d21a22a1154777ad56ea55c51a9cf3831"
 dependencies = [
  "proc-macro2",
  "quote",

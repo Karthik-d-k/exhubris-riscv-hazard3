@@ -16,8 +16,8 @@ drv-stm32xx-sys-api = { version = "0.1.0", path = "../stm32xx-sys-api" }
 hubris-task-slots = { version = "0.1.0", path = "../../sys/task-slots" }
 hubris-notifications = { version = "0.1.0", path = "../../sys/notifications" }
 cortex-m = { version = "0.7.7", features = ["inline-asm"] }
-zerocopy = "0.8.11"
-zerocopy-derive = "0.8.11"
+zerocopy = "0.8.25"
+zerocopy-derive = "0.8.25"
 num-traits = { version = "0.2.19", default-features = false }
 num-derive = "0.4.2"
 smart-default = "0.7.1"
