@@ -6,71 +6,79 @@
             "type": "probe-rs-debug",
             "request": "launch",
             "name": "probe-rs-debug",
-            //!MODIFY ... can be a server that is remote from the VSCode session, but local to the probe
-            //"server": "127.0.0.1:50000",
             "cwd": "${workspaceFolder}",
-            //!MODIFY (or remove)
-            "speed": 10000,
-            //!MODIFY (or remove)
-            //"probe": "2e8a:000c",
+            "speed": 100,
             "runtimeExecutable": "probe-rs",
             "runtimeArgs": [
                 "dap-server"
             ],
-            //!MODIFY
             "chip": "RP235x",
             "connectUnderReset": false,
             "flashingConfig": {
-                "flashingEnabled": false,
-                "haltAfterReset": true,
+                "flashingEnabled": true,
+                "haltAfterReset": false,
                 "formatOptions": {
-                    //!MODIFY (or remove). Valid values are: 'bin', 'hex', 'elf'(default), 'idf'
                     "binaryFormat": "elf"
                 }
             },
             "coreConfigs": [
                 {
                     "coreIndex": 0,
-                    //!MODIFY
-                    "programBinary": ".work/hazard3/final/kernel",
-                    //!MODIFY
+                    "programBinary": ".work/cortex-m33/final/kernel",
                     "svdFile": "C:\\Users\\adt8kor\\wws\\riscv\\hubris-riscv-hazard3\\chips\\rp2350-hazard3\\RP2350.svd"
                 }
             ],
-            "env": {
-                //!MODIFY (or remove)
-                // If you set this variable, check the VSCode console log window for the location of the log file.
-                "RUST_LOG": "debug"
-            },
-            // Info, Debug
             "consoleLogLevel": "Debug"
         },
         {
-            "preLaunchTask": "Picotool reboot",
-            "name": "Pico Debug (Cortex-Debug)",
-            "cwd": "${workspaceFolder}",
-            "executable": ".work/hazard3/final/kernel",
-            "request": "launch",
+            "name": "Pico Debug (External OpenOCD)",
             "type": "cortex-debug",
-            "servertype": "openocd",
-            "serverpath": "openocd.exe",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "loadFiles": [
+                ".work/hazard3/final/kernel"
+            ],
+            "symbolFiles": [
+                ".work/hazard3/final/idle",
+                ".work/hazard3/final/super",
+            ],
+            "servertype": "external",
+            "gdbTarget": "localhost:3333",
             "gdbPath": "riscv32-unknown-elf-gdb.exe",
-            "device": "RP235X",
-            "configFiles": [
-                "app/demo-hazard3/openocd.cfg"
-            ],
-            "svdFile": "C:\\Users\\adt8kor\\wws\\riscv\\hubris-riscv-hazard3\\chips\\rp2350-hazard3\\RP2350.svd",
+            // Optional, gives you register/peripheral view in VS Code
+            "svdFile": "C:/Users/adt8kor/wws/riscv/hubris-riscv-hazard3/chips/rp2350-hazard3/RP2350.svd",
             "runToEntryPoint": "main",
-            // Fix for no_flash binaries, where monitor reset halt doesn't do what is expected
-            // Also works fine for flash binaries
-            "overrideLaunchCommands": [
-                // "monitor reset init",
+            "showDevDebugOutput": "raw",
+            "postLaunchCommands": [
+                "monitor arm semihosting enable",
             ],
-            "openOCDLaunchCommands": [
-                "adapter speed 5000",
-                "set USE_CORE rv0",
-                "program .work/hazard3/final/kernel verify",
-            ]
+            "toolchainPrefix": "riscv32-unknown-none-elf",
+        },
+        {
+            "name": "Pico Debug (Integrated OpenOCD)",
+            "type": "cortex-debug",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "loadFiles": [
+                "${workspaceFolder}/.work/hazard3/final/kernel"
+            ],
+            "symbolFiles": [
+                {
+                    "file": "${workspaceFolder}/.work/hazard3/final/idle"
+                },
+                {
+                    "file": "${workspaceFolder}/.work/hazard3/final/super"
+                }
+            ],
+            "servertype": "openocd",
+            "configFiles": [
+                "interface/cmsis-dap.cfg",
+                "target/rp2350.cfg"
+            ],
+            "gdbPath": "riscv32-unknown-elf-gdb.exe",
+            "svdFile": "C:/Users/adt8kor/wws/riscv/hubris-riscv-hazard3/chips/rp2350-hazard3/RP2350.svd",
+            "runToEntryPoint": "main",
+            "showDevDebugOutput": "raw"
         },
     ]
 }
