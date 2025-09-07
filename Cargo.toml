@@ -13,6 +13,8 @@ userlib = {path = "sys/userlib"}
 kipc = {path = "sys/kipc"}
 hubris-num-tasks = {path = "sys/num-tasks"}
 hubris-build = {path="tools/build"}
+defmt = { version = "0.3" }
+rtt-target = { version = "0.6", features = ["defmt"] }
 
 [profile.release]
 debug = true

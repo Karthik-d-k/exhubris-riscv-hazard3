@@ -7,7 +7,7 @@ name = "abi"
 version = "0.1.0"
 source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes#061df2fc76433bbc7cc3931a8981fbd509e35c97"
 dependencies = [
- "bitflags",
+ "bitflags 2.9.1",
  "byteorder",
  "phash 0.1.0 (git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes)",
  "serde",
@@ -17,9 +17,9 @@ dependencies = [
 [[package]]
 name = "abi"
 version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#ba3762b115963494a40f1d07c8fa473c57a757e4"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#b26c827eb3ed272778fca64fd91c031e0337600d"
 dependencies = [
- "bitflags",
+ "bitflags 2.9.1",
  "byteorder",
  "phash 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv)",
  "serde",
@@ -128,7 +128,7 @@ dependencies = [
 [[package]]
 name = "armv8-m-mpu"
 version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#ba3762b115963494a40f1d07c8fa473c57a757e4"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#b26c827eb3ed272778fca64fd91c031e0337600d"
 dependencies = [
  "cortex-m",
 ]
@@ -210,6 +210,12 @@ checksum = "46afbd2983a5d5a7bd740ccb198caf5b82f45c40c09c0eed36052d91cb92e719"
 
 [[package]]
 name = "bitflags"
+version = "1.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
+
+[[package]]
+name = "bitflags"
 version = "2.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1b8e56985ec62d17e9c1001dc89c88ecd7dc08e47eba5ec7c29c7b5eeecde967"
@@ -254,16 +260,16 @@ name = "build-kconfig"
 version = "0.1.0"
 source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes#061df2fc76433bbc7cc3931a8981fbd509e35c97"
 dependencies = [
- "bitflags",
+ "bitflags 2.9.1",
  "serde",
 ]
 
 [[package]]
 name = "build-kconfig"
 version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#ba3762b115963494a40f1d07c8fa473c57a757e4"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#b26c827eb3ed272778fca64fd91c031e0337600d"
 dependencies = [
- "bitflags",
+ "bitflags 2.9.1",
  "serde",
 ]
 
@@ -284,7 +290,7 @@ dependencies = [
 [[package]]
 name = "build-util"
 version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#ba3762b115963494a40f1d07c8fa473c57a757e4"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#b26c827eb3ed272778fca64fd91c031e0337600d"
 dependencies = [
  "anyhow",
  "indexmap 1.9.3",
@@ -337,7 +343,7 @@ dependencies = [
 [[package]]
 name = "call_rustfmt"
 version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#ba3762b115963494a40f1d07c8fa473c57a757e4"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#b26c827eb3ed272778fca64fd91c031e0337600d"
 dependencies = [
  "anyhow",
 ]
@@ -481,6 +487,7 @@ checksum = "8ec610d8f49840a5b376c69663b6369e71f4b34484b9b2eb29fb918d92516cb9"
 dependencies = [
  "bare-metal 0.2.5",
  "bitfield",
+ "critical-section",
  "embedded-hal 0.2.7",
  "volatile-register",
 ]
@@ -565,7 +572,7 @@ version = "0.28.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "829d955a0bb380ef178a640b91779e3987da38c9aea133b20614cfed8cdea9c6"
 dependencies = [
- "bitflags",
+ "bitflags 2.9.1",
  "crossterm_winapi",
  "parking_lot",
  "rustix 0.38.44",
@@ -596,6 +603,47 @@ name = "deflate64"
 version = "0.1.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "da692b8d1080ea3045efaab14434d40468c3d8657e42abddfffca87b428f4c1b"
+
+[[package]]
+name = "defmt"
+version = "0.3.100"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f0963443817029b2024136fc4dd07a5107eb8f977eaf18fcd1fdeb11306b64ad"
+dependencies = [
+ "defmt 1.0.1",
+]
+
+[[package]]
+name = "defmt"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "548d977b6da32fa1d1fda2876453da1e7df63ad0304c8b3dae4dbe7b96f39b78"
+dependencies = [
+ "bitflags 1.3.2",
+ "defmt-macros",
+]
+
+[[package]]
+name = "defmt-macros"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3d4fc12a85bcf441cfe44344c4b72d58493178ce635338a3f3b78943aceb258e"
+dependencies = [
+ "defmt-parser",
+ "proc-macro-error2",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.104",
+]
+
+[[package]]
+name = "defmt-parser"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "10d60334b3b2e7c9d91ef8150abfb6fa4c1c39ebbcf4a81c2e346aad939fee3e"
+dependencies = [
+ "thiserror 2.0.12",
+]
 
 [[package]]
 name = "deranged"
@@ -1090,7 +1138,7 @@ dependencies = [
  "abi 0.1.0 (git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes)",
  "anyhow",
  "armv8-m-mpu 0.1.0 (git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes)",
- "bitflags",
+ "bitflags 2.9.1",
  "build-kconfig 0.1.0 (git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes)",
  "build-util 0.1.0 (git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes)",
  "byteorder",
@@ -1114,12 +1162,12 @@ dependencies = [
 [[package]]
 name = "kern"
 version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#ba3762b115963494a40f1d07c8fa473c57a757e4"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#b26c827eb3ed272778fca64fd91c031e0337600d"
 dependencies = [
  "abi 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv)",
  "anyhow",
  "armv8-m-mpu 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv)",
- "bitflags",
+ "bitflags 2.9.1",
  "build-kconfig 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv)",
  "build-util 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv)",
  "byteorder",
@@ -1152,7 +1200,7 @@ source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubr
 [[package]]
 name = "kerncore"
 version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#ba3762b115963494a40f1d07c8fa473c57a757e4"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#b26c827eb3ed272778fca64fd91c031e0337600d"
 
 [[package]]
 name = "kernel-generic-cortex-m33"
@@ -1162,6 +1210,7 @@ dependencies = [
  "cortex-m-rt",
  "kern 0.1.0 (git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes)",
  "rp235x-pac",
+ "rtt-target",
 ]
 
 [[package]]
@@ -1171,7 +1220,9 @@ dependencies = [
  "kern 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv)",
  "riscv",
  "riscv-rt",
+ "rp235x-gpio",
  "rp235x-pac",
+ "rtt-target",
  "sha2-const-stable",
 ]
 
@@ -1246,7 +1297,7 @@ version = "0.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1580801010e535496706ba011c15f8532df6b42297d2e471fec38ceadd8c0638"
 dependencies = [
- "bitflags",
+ "bitflags 2.9.1",
  "libc",
 ]
 
@@ -1552,7 +1603,7 @@ source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubr
 [[package]]
 name = "phash"
 version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#ba3762b115963494a40f1d07c8fa473c57a757e4"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#b26c827eb3ed272778fca64fd91c031e0337600d"
 
 [[package]]
 name = "phash-gen"
@@ -1568,7 +1619,7 @@ dependencies = [
 [[package]]
 name = "phash-gen"
 version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#ba3762b115963494a40f1d07c8fa473c57a757e4"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#b26c827eb3ed272778fca64fd91c031e0337600d"
 dependencies = [
  "anyhow",
  "phash 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv)",
@@ -1607,6 +1658,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "portable-atomic"
+version = "1.11.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f84267b20a16ea918e43c6a88433c2d54fa145c92a811b5b047ccbe153674483"
+
+[[package]]
 name = "powerfmt"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1628,6 +1685,28 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "061c1221631e079b26479d25bbf2275bfe5917ae8419cd7e34f13bfc2aa7539a"
 dependencies = [
  "proc-macro2",
+ "syn 2.0.104",
+]
+
+[[package]]
+name = "proc-macro-error-attr2"
+version = "2.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "96de42df36bb9bba5542fe9f1a054b8cc87e172759a1868aa05c1f3acc89dfc5"
+dependencies = [
+ "proc-macro2",
+ "quote",
+]
+
+[[package]]
+name = "proc-macro-error2"
+version = "2.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "11ec05c52be0a07b08061f7dd003e7d7092e0472bc731b4af7bb1ef876109802"
+dependencies = [
+ "proc-macro-error-attr2",
+ "proc-macro2",
+ "quote",
  "syn 2.0.104",
 ]
 
@@ -1729,7 +1808,7 @@ version = "0.5.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0d04b7d0ee6b4a0207a0a7adb104d23ecb0b47d6beae7152d0fa34b692b29fd6"
 dependencies = [
- "bitflags",
+ "bitflags 2.9.1",
 ]
 
 [[package]]
@@ -1828,7 +1907,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b91f7eff05f748767f183df4320a63d6936e9c6107d97c9e6bdd9784f4289c94"
 dependencies = [
  "base64 0.21.7",
- "bitflags",
+ "bitflags 2.9.1",
  "serde",
  "serde_derive",
 ]
@@ -1853,6 +1932,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "rtt-target"
+version = "0.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4235cd78091930e907d2a510adb0db1369e82668eafa338f109742fa0c83059d"
+dependencies = [
+ "critical-section",
+ "defmt 0.3.100",
+ "portable-atomic",
+ "ufmt-write",
+]
+
+[[package]]
 name = "rustc-demangle"
 version = "0.1.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1873,7 +1964,7 @@ version = "0.38.44"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fdb5bc1ae2baa591800df16c9ca78619bf65c0488b41b96ccec5d11220d8c154"
 dependencies = [
- "bitflags",
+ "bitflags 2.9.1",
  "errno",
  "libc",
  "linux-raw-sys 0.4.15",
@@ -1886,7 +1977,7 @@ version = "1.0.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c71e83d6afe7ff64890ec6b71d6a69bb8a610ab78ce364b3352876bb4c801266"
 dependencies = [
- "bitflags",
+ "bitflags 2.9.1",
  "errno",
  "libc",
  "linux-raw-sys 0.9.4",
@@ -2272,7 +2363,7 @@ dependencies = [
 [[package]]
 name = "toml-task"
 version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#ba3762b115963494a40f1d07c8fa473c57a757e4"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#b26c827eb3ed272778fca64fd91c031e0337600d"
 dependencies = [
  "anyhow",
  "indexmap 1.9.3",
@@ -2352,6 +2443,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "ufmt-write"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e87a2ed6b42ec5e28cc3b94c09982969e9227600b2e3dcbc1db927a84c06bd69"
+
+[[package]]
 name = "unicode-ident"
 version = "1.0.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2389,13 +2486,13 @@ source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubr
 [[package]]
 name = "unwrap-lite"
 version = "0.1.0"
-source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#ba3762b115963494a40f1d07c8fa473c57a757e4"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?branch=riscv#b26c827eb3ed272778fca64fd91c031e0337600d"
 
 [[package]]
 name = "userlib"
 version = "0.1.0"
 dependencies = [
- "bitflags",
+ "bitflags 2.9.1",
  "cfg-if",
  "cortex-m",
  "riscv",
@@ -2779,7 +2876,7 @@ version = "0.39.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6f42320e61fe2cfd34354ecb597f86f413484a798ba44a8ca1165c58d42da6c1"
 dependencies = [
- "bitflags",
+ "bitflags 2.9.1",
 ]
 
 [[package]]

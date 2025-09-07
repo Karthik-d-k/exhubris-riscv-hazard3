@@ -15,6 +15,8 @@ use rp235x_pac::OTP_DATA_RAW;
 // use crate::block::ImageDef;
 use cortex_m_rt::entry;
 
+use rtt_target::{rprintln, rtt_init_print};
+
 /// A Block as understood by the Boot ROM.
 ///
 /// This is an Image Definition Block
@@ -50,9 +52,11 @@ pub fn reset_secure_boot() {
 
 #[entry]
 fn main() -> ! {
+    rtt_init_print!();
     // reset_secure_boot();
     // Default boot speed, until we bother raising it:
     const CYCLES_PER_MS: u32 = 8_000;
 
+    rprintln!("Starting kernel");
     unsafe { hubris_kern::startup::start_kernel(CYCLES_PER_MS) }
 }

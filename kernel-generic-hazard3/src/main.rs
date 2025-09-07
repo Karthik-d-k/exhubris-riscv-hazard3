@@ -10,10 +10,17 @@
 
 // We have to do this if we don't otherwise use it to ensure its vector table
 // gets linked in.
-use rp235x_pac as _;
+use rp235x_pac::{CLOCKS, RESETS};
 
 // use crate::block::ImageDef;
 use riscv_rt::entry;
+
+use rp235x_gpio::{
+    enable_clock, reset_bring_down_io_bank0, reset_bring_down_pads_bank0, reset_bring_up_io_bank0,
+    reset_bring_up_pads_bank0,
+};
+
+use rtt_target::{rprintln, rtt_init_print};
 
 /// A Block as understood by the Boot ROM.
 ///
@@ -44,8 +51,24 @@ pub static IMAGE_DEF: ImageDefBlock = ImageDefBlock {
 
 #[entry]
 fn main() -> ! {
+    // rtt_init_print!();
+    // enable clock
+    let clock = unsafe { CLOCKS::steal() };
+    enable_clock(&clock);
+    rprintln!("Clock enabled");
+
+    // bring IO_BANK0 and PADS_BANK0 out of reset
+    let resets = unsafe { RESETS::steal() };
+    reset_bring_down_io_bank0(&resets);
+    reset_bring_down_pads_bank0(&resets);
+    rprintln!("Bringing down io and pads");
+    reset_bring_up_io_bank0(&resets);
+    reset_bring_up_pads_bank0(&resets);
+    rprintln!("Bringing up io and pads");
+
     // Default boot speed, until we bother raising it:
     const CYCLES_PER_MS: u32 = 8_000;
 
+    rprintln!("Starting kernel");
     unsafe { hubris_kern::startup::start_kernel(CYCLES_PER_MS) }
 }
