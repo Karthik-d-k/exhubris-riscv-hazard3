@@ -59,5 +59,5 @@ fn main() -> ! {
         48_000
     };
 
-    unsafe { kern::startup::start_kernel(cycles_per_ms) }
+    unsafe { hubris_kern::startup::start_kernel(cycles_per_ms) }
 }
