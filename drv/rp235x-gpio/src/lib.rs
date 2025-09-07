@@ -3,7 +3,34 @@
 #![no_std]
 
 use rp235x_pac::io_bank0::gpio::gpio_ctrl::FUNCSEL_A;
-use rp235x_pac::{IO_BANK0, PADS_BANK0, SIO};
+use rp235x_pac::{CLOCKS, IO_BANK0, PADS_BANK0, RESETS, SIO};
+
+/// Enable Clock
+pub fn enable_clock(clock: &CLOCKS) {
+    clock.clk_peri_ctrl().modify(|_, w| w.enable().set_bit());
+}
+
+/// Bring up IO_BANK0
+pub fn reset_bring_up_io_bank0(resets: &RESETS) {
+    resets.reset().modify(|_, w| w.io_bank0().clear_bit());
+    while resets.reset_done().read().io_bank0().bit_is_clear() {}
+}
+
+/// Bring down IO_BANK0
+pub fn reset_bring_down_io_bank0(resets: &RESETS) {
+    resets.reset().modify(|_, w| w.io_bank0().set_bit());
+}
+
+/// Bring up PADS_BANK0
+pub fn reset_bring_up_pads_bank0(resets: &RESETS) {
+    resets.reset().modify(|_, w| w.pads_bank0().clear_bit());
+    while resets.reset_done().read().pads_bank0().bit_is_clear() {}
+}
+
+/// Bring down PADS_BANK0
+pub fn reset_bring_down_pads_bank0(resets: &RESETS) {
+    resets.reset().modify(|_, w| w.pads_bank0().set_bit());
+}
 
 pub struct GpioPeripherals {
     pub sio: SIO,
