@@ -34,6 +34,8 @@ pub fn generate_kconfig(
     .collect();
 
     let mut kconfig = kconfig::KernelConfig {
+        features: vec![],
+        extern_regions: BTreeMap::new(),
         tasks: vec![],
         shared_regions,
         irqs: BTreeMap::new(),
