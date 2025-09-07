@@ -68,6 +68,7 @@ SECTIONS
     {
         __start_block_addr = .;
         KEEP(*(.start_block));
+        __end_block_addr = .;
     } > VECTORS
 
   /* Header containing data needed by the bootloader.  We specify
@@ -285,5 +286,9 @@ ASSERT(ADDR(.vector_table) % (1 << LOG2CEIL(SIZEOF(.vector_table))) == 0, "
 Vector table alignment too small for number of exception entires. Increase
 the alignment to the next power of two");
 
+/* IMAGE_DEF must sit within first 4 KiB of the image */
+ASSERT(SIZEOF(.start_block) == 0
+       || (__end_block_addr - ADDR(.vector_table)) <= 0x1000,
+"RP235x: IMAGE_DEF must be within the first 4 KiB of the image");
 
 /* Do not exceed this mark in the error messages above                                    | */
