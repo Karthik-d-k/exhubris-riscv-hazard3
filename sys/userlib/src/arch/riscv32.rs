@@ -563,42 +563,38 @@ cfg_if::cfg_if! {
     if #[cfg(hubris_target = "riscv32imac-unknown-none-elf")] {
         // Add startup code for RISC-V
         global_asm!("
-        .section .text.start
-        .globl _start
+        .section .text.start, \"ax\"
+        .global _start
         _start:
-            # Setup stack pointer using _stack_start symbol from linker
-            la sp, _stack_start
-
-            # Zero the BSS section
-            la a0, __sbss
-            la a1, __ebss
-            bgeu a0, a1, 2f
-        1:
-            sw zero, 0(a0)
-            addi a0, a0, 4
-            bltu a0, a1, 1b
-        2:
-
-            # Copy data section from flash to RAM
-            la a0, __sidata     # source in flash
-            la a1, __sdata      # destination in RAM
-            la a2, __edata      # end of destination
-            bgeu a1, a2, 4f
-        3:
-            lw t0, 0(a0)
-            sw t0, 0(a1)
-            addi a0, a0, 4
-            addi a1, a1, 4
-            bltu a1, a2, 3b
-        4:
-
-            # Call user's main function
+            # Copy .data from flash to RAM
+            la t0, __sdata
+            la a3, __edata
+            la t1, __sidata
+            bgeu t0, a3, 2f
+        1:  
+            lw t2, 0(t1)
+            addi t1, t1, 4
+            sw t2, 0(t0)
+            addi t0, t0, 4
+            bltu t0, a3, 1b
+        2:  
+            # Zero out .bss
+            la t0, __sbss
+            la t2, __ebss
+            bgeu  t0, t2, 4f
+        3:  
+            sw  zero, 0(t0)
+            addi t0, t0, 4
+            bltu t0, t2, 3b
+        4: 
+            # Now, to the user entry point. We call it in case it
+            # returns. (It's not supposed to.) We reference it through
+            # a sym operand because it's a Rust func and may be mangled.
             jal ra, {main}
 
-            # If main returns (it shouldn't), just loop forever
-        _start_hang:
-            j _start_hang
-        ",
+            # Should main return... kill it.
+            unimp
+            ",
             main = sym main,
         );
     } else {
