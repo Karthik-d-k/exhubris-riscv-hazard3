@@ -1,0 +1,52 @@
+// Demo Application Definition
+
+// App name is used for output files etc. It must be the first non-blank
+// non-comment line in the file.
+app cortex-m33
+
+// Currently the board information is inlined. It would be nice to refer to an
+// external file, like we already do for chip definitions.
+board rp2350-pico2 {
+    chip "proj:chips/cortex-m33.kdl"
+}
+
+// Instructions for building the kernel.
+kernel {
+    workspace-crate kernel-generic-cortex-m33
+    no-default-features
+    // The kernel itself should provide this information eventually, but for now
+    // we have to state it:
+    stack-size 544
+    uses-peripheral resets
+}
+
+Supervisor task. Every nontrivial application needs one. The exhubris
+minisuper implementation is good for most simple systems.
+task super {
+    workspace-crate minisuper
+    priority 0
+
+    // Eventually, tasks should be able to indicate their stack requirement
+    // somehow, but for now we have to state it:
+    stack-size 128
+}
+
+// blinky task. Blinks an external led
+task blinky {
+    workspace-crate blinky
+    stack-size 128 // 256 bytes on a part with an FPU
+    priority 1
+    uses-peripheral sio
+    uses-peripheral io_bank0
+    uses-peripheral pads_bank0
+}
+
+// Idle task. Every application needs one, few applications want to write their
+// own. We pull in a standard one from git:
+task idle {
+    workspace-crate idle
+    stack-size 32
+    priority 2
+    // This makes Humility work a _lot_ better.
+    features insomniac
+}

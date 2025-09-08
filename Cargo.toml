@@ -18,6 +18,7 @@ userlib = {path = "sys/userlib"}
 kipc = {path = "sys/kipc"}
 hubris-num-tasks = {path = "sys/num-tasks"}
 hubris-build = {path="tools/build"}
+rp235x-gpio = { git = "https://github.com/Karthik-d-k/exhubris-riscv-hazard3", rev="407f8612f9456c3043e41568babe890171ceeeb5" } # branch: riscv
 
 [profile.release]
 debug = true
