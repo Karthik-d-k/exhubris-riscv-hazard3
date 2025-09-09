@@ -16,19 +16,19 @@ kernel {
     no-default-features
     // The kernel itself should provide this information eventually, but for now
     // we have to state it:
-    stack-size 544
+    stack-size 1024
     uses-peripheral resets
 }
 
-Supervisor task. Every nontrivial application needs one. The exhubris
-minisuper implementation is good for most simple systems.
+// Supervisor task. Every nontrivial application needs one. The exhubris
+// minisuper implementation is good for most simple systems.
 task super {
     workspace-crate minisuper
     priority 0
 
     // Eventually, tasks should be able to indicate their stack requirement
     // somehow, but for now we have to state it:
-    stack-size 128
+    stack-size 192
 }
 
 // blinky task. Blinks an external led
@@ -45,7 +45,7 @@ task blinky {
 // own. We pull in a standard one from git:
 task idle {
     workspace-crate idle
-    stack-size 32
+    stack-size 128
     priority 2
     // This makes Humility work a _lot_ better.
     features insomniac
