@@ -16,7 +16,7 @@ kernel {
     workspace-crate kernel-generic-hazard3
     // The kernel itself should provide this information eventually, but for now
     // we have to state it:
-    stack-size 1024
+    stack-size 2048
     // disable default features for now
     no-default-features
 }
@@ -25,14 +25,14 @@ kernel {
 // minisuper implementation is good for most simple systems.
 task super {
     workspace-crate minisuper
-    stack-size 128 // 256 bytes on a part with an FPU
+    stack-size 384
     priority 0
 }
 
 // blinky task. Blinks an external led
 task blinky {
     workspace-crate blinky
-    stack-size 128 // 256 bytes on a part with an FPU
+    stack-size 256
     priority 1
     // uses-peripheral sio
     // uses-peripheral io_bank0
@@ -44,7 +44,7 @@ task blinky {
 // own. We pull in a standard one from git:
 task idle {
     workspace-crate idle
-    stack-size 32
+    stack-size 256
     priority 2
     // This makes Humility work a _lot_ better.
     features insomniac
