@@ -178,6 +178,13 @@ pub fn get_target_spec(triple: &str) -> Option<TargetSpec> {
             bfd_name: "armelf".to_string(),
             region_count: 8 - 1,
         }),
+        "riscv32imac-unknown-none-elf" => Some(TargetSpec {
+            size_rule: SizeRule::PowerOfTwo,
+            alloc_minimum: 32,
+            stack_align: 16,
+            bfd_name: "elf32lriscv".to_string(),
+            region_count: 8 - 1, // first region is reserved for the "null" region
+        }),
         _ => None,
     }
 }

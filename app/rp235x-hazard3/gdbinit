@@ -1,0 +1,291 @@
+# get PMP registers from gdb (hex only)
+define info-reg-pmp-gdb
+  printf "pmpcfg0 0x%x\n", $pmpcfg0
+  printf "pmpcfg1 0x%x\n", $pmpcfg1  
+  printf "pmpcfg2 0x%x\n", $pmpcfg2
+  printf "pmpcfg3 0x%x\n", $pmpcfg3
+  printf "pmpaddr0 0x%x\n", $pmpaddr0
+  printf "pmpaddr1 0x%x\n", $pmpaddr1
+  printf "pmpaddr2 0x%x\n", $pmpaddr2
+  printf "pmpaddr3 0x%x\n", $pmpaddr3
+  printf "pmpaddr4 0x%x\n", $pmpaddr4
+  printf "pmpaddr5 0x%x\n", $pmpaddr5
+  printf "pmpaddr6 0x%x\n", $pmpaddr6
+  printf "pmpaddr7 0x%x\n", $pmpaddr7
+  printf "pmpaddr8 0x%x\n", $pmpaddr8
+  printf "pmpaddr9 0x%x\n", $pmpaddr9
+  printf "pmpaddr10 0x%x\n", $pmpaddr10
+  printf "pmpaddr11 0x%x\n", $pmpaddr11
+  printf "pmpaddr12 0x%x\n", $pmpaddr12
+  printf "pmpaddr13 0x%x\n", $pmpaddr13
+  printf "pmpaddr14 0x%x\n", $pmpaddr14
+  printf "pmpaddr15 0x%x\n", $pmpaddr15
+end
+
+# get PMP registers from openocd (with names)
+define info-reg-pmp-openocd
+  printf "pmpcfg0 "
+  monitor riscv dm_read 0x3a0
+  printf "pmpcfg1 "
+  monitor riscv dm_read 0x3a1
+  printf "pmpcfg2 "
+  monitor riscv dm_read 0x3a2
+  printf "pmpcfg3 "
+  monitor riscv dm_read 0x3a3
+  printf "pmpaddr0 "
+  monitor riscv dm_read 0x3b0
+  printf "pmpaddr1 "
+  monitor riscv dm_read 0x3b1
+  printf "pmpaddr2 "
+  monitor riscv dm_read 0x3b2
+  printf "pmpaddr3 "
+  monitor riscv dm_read 0x3b3
+  printf "pmpaddr4 "
+  monitor riscv dm_read 0x3b4
+  printf "pmpaddr5 "
+  monitor riscv dm_read 0x3b5
+  printf "pmpaddr6 "
+  monitor riscv dm_read 0x3b6
+  printf "pmpaddr7 "
+  monitor riscv dm_read 0x3b7
+  printf "pmpaddr8 "
+  monitor riscv dm_read 0x3b8
+  printf "pmpaddr9 "
+  monitor riscv dm_read 0x3b9
+  printf "pmpaddr10 "
+  monitor riscv dm_read 0x3ba
+  printf "pmpaddr11 "
+  monitor riscv dm_read 0x3bb
+  printf "pmpaddr12 "
+  monitor riscv dm_read 0x3bc
+  printf "pmpaddr13 "
+  monitor riscv dm_read 0x3bd
+  printf "pmpaddr14 "
+  monitor riscv dm_read 0x3be
+  printf "pmpaddr15 "
+  monitor riscv dm_read 0x3bf
+end
+
+# get PMP registers using assembly instructions
+define info-reg-pmp
+  printf "pmpcfg0 "
+  monitor riscv exec_progbuf 0x3a025073
+  printf "0x%x\n", $a0
+
+  printf "pmpcfg1 "
+  monitor riscv exec_progbuf 0x3a125073
+  printf "0x%x\n", $a0
+
+  printf "pmpcfg2 "
+  monitor riscv exec_progbuf 0x3a225073
+  printf "0x%x\n", $a0
+
+  printf "pmpcfg3 "
+  monitor riscv exec_progbuf 0x3a325073
+  printf "0x%x\n", $a0
+
+  printf "pmpaddr0 "
+  monitor riscv exec_progbuf 0x3b025073
+  printf "0x%x\n", $a0
+
+  printf "pmpaddr1 "
+  monitor riscv exec_progbuf 0x3b125073
+  printf "0x%x\n", $a0
+
+  printf "pmpaddr2 "
+  monitor riscv exec_progbuf 0x3b225073
+  printf "0x%x\n", $a0
+
+  printf "pmpaddr3 "
+  monitor riscv exec_progbuf 0x3b325073
+  printf "0x%x\n", $a0
+
+  printf "pmpaddr4 "
+  monitor riscv exec_progbuf 0x3b425073
+  printf "0x%x\n", $a0
+
+  printf "pmpaddr5 "
+  monitor riscv exec_progbuf 0x3b525073
+  printf "0x%x\n", $a0
+
+  printf "pmpaddr6 "
+  monitor riscv exec_progbuf 0x3b625073
+  printf "0x%x\n", $a0
+
+  printf "pmpaddr7 "
+  monitor riscv exec_progbuf 0x3b725073
+  printf "0x%x\n", $a0
+
+  printf "pmpaddr8 "
+  monitor riscv exec_progbuf 0x3b825073
+  printf "0x%x\n", $a0
+
+  printf "pmpaddr9 "
+  monitor riscv exec_progbuf 0x3b925073
+  printf "0x%x\n", $a0
+
+  printf "pmpaddr10 "
+  monitor riscv exec_progbuf 0x3ba25073
+  printf "0x%x\n", $a0
+
+  printf "pmpaddr11 "
+  monitor riscv exec_progbuf 0x3bb25073
+  printf "0x%x\n", $a0
+
+  printf "pmpaddr12 "
+  monitor riscv exec_progbuf 0x3bc25073
+  printf "0x%x\n", $a0
+
+  printf "pmpaddr13 "
+  monitor riscv exec_progbuf 0x3bd25073
+  printf "0x%x\n", $a0
+
+  printf "pmpaddr14 "
+  monitor riscv exec_progbuf 0x3be25073
+  printf "0x%x\n", $a0
+
+  printf "pmpaddr15 "
+  monitor riscv exec_progbuf 0x3bf25073
+  printf "0x%x\n", $a0
+end
+
+
+
+# save current register snapshot into convenience variables
+define save_regs
+  set $ra_prev  = $ra
+  set $sp_prev  = $sp
+  set $gp_prev  = $gp
+  set $tp_prev  = $tp
+  set $t0_prev  = $t0
+  set $t1_prev  = $t1
+  set $t2_prev  = $t2
+  set $s0_prev  = $s0
+  set $s1_prev  = $s1
+  set $a0_prev  = $a0
+  set $a1_prev  = $a1
+  set $a2_prev  = $a2
+  set $a3_prev  = $a3
+  set $a4_prev  = $a4
+  set $a5_prev  = $a5
+  set $a6_prev  = $a6
+  set $a7_prev  = $a7
+  set $s2_prev  = $s2
+  set $s3_prev  = $s3
+  set $s4_prev  = $s4
+  set $s5_prev  = $s5
+  set $s6_prev  = $s6
+  set $s7_prev  = $s7
+  set $s8_prev  = $s8
+  set $s9_prev  = $s9
+  set $s10_prev = $s10
+  set $s11_prev = $s11
+  set $t3_prev  = $t3
+  set $t4_prev  = $t4
+  set $t5_prev  = $t5
+  set $t6_prev  = $t6
+end
+
+# compare registers with previous snapshot
+define diff_regs
+  if $ra != $ra_prev
+    printf "ra:  0x%x -> 0x%x\n", $ra_prev, $ra
+  end
+  if $sp != $sp_prev
+    printf "sp:  0x%x -> 0x%x\n", $sp_prev, $sp
+  end
+  if $gp != $gp_prev
+    printf "gp:  0x%x -> 0x%x\n", $gp_prev, $gp
+  end
+  if $tp != $tp_prev
+    printf "tp:  0x%x -> 0x%x\n", $tp_prev, $tp
+  end
+  if $t0 != $t0_prev
+    printf "t0:  0x%x -> 0x%x\n", $t0_prev, $t0
+  end
+  if $t1 != $t1_prev
+    printf "t1:  0x%x -> 0x%x\n", $t1_prev, $t1
+  end
+  if $t2 != $t2_prev
+    printf "t2:  0x%x -> 0x%x\n", $t2_prev, $t2
+  end
+  if $s0 != $s0_prev
+    printf "s0:  0x%x -> 0x%x\n", $s0_prev, $s0
+  end
+  if $s1 != $s1_prev
+    printf "s1:  0x%x -> 0x%x\n", $s1_prev, $s1
+  end
+  if $a0 != $a0_prev
+    printf "a0:  0x%x -> 0x%x\n", $a0_prev, $a0
+  end
+  if $a1 != $a1_prev
+    printf "a1:  0x%x -> 0x%x\n", $a1_prev, $a1
+  end
+  if $a2 != $a2_prev
+    printf "a2:  0x%x -> 0x%x\n", $a2_prev, $a2
+  end
+  if $a3 != $a3_prev
+    printf "a3:  0x%x -> 0x%x\n", $a3_prev, $a3
+  end
+  if $a4 != $a4_prev
+    printf "a4:  0x%x -> 0x%x\n", $a4_prev, $a4
+  end
+  if $a5 != $a5_prev
+    printf "a5:  0x%x -> 0x%x\n", $a5_prev, $a5
+  end
+  if $a6 != $a6_prev
+    printf "a6:  0x%x -> 0x%x\n", $a6_prev, $a6
+  end
+  if $a7 != $a7_prev
+    printf "a7:  0x%x -> 0x%x\n", $a7_prev, $a7
+  end
+  if $s2 != $s2_prev
+    printf "s2:  0x%x -> 0x%x\n", $s2_prev, $s2
+  end
+  if $s3 != $s3_prev
+    printf "s3:  0x%x -> 0x%x\n", $s3_prev, $s3
+  end
+  if $s4 != $s4_prev
+    printf "s4:  0x%x -> 0x%x\n", $s4_prev, $s4
+  end
+  if $s5 != $s5_prev
+    printf "s5:  0x%x -> 0x%x\n", $s5_prev, $s5
+  end
+  if $s6 != $s6_prev
+    printf "s6:  0x%x -> 0x%x\n", $s6_prev, $s6
+  end
+  if $s7 != $s7_prev
+    printf "s7:  0x%x -> 0x%x\n", $s7_prev, $s7
+  end
+  if $s8 != $s8_prev
+    printf "s8:  0x%x -> 0x%x\n", $s8_prev, $s8
+  end
+  if $s9 != $s9_prev
+    printf "s9:  0x%x -> 0x%x\n", $s9_prev, $s9
+  end
+  if $s10 != $s10_prev
+    printf "s10: 0x%x -> 0x%x\n", $s10_prev, $s10
+  end
+  if $s11 != $s11_prev
+    printf "s11: 0x%x -> 0x%x\n", $s11_prev, $s11
+  end
+  if $t3 != $t3_prev
+    printf "t3:  0x%x -> 0x%x\n", $t3_prev, $t3
+  end
+  if $t4 != $t4_prev
+    printf "t4:  0x%x -> 0x%x\n", $t4_prev, $t4
+  end
+  if $t5 != $t5_prev
+    printf "t5:  0x%x -> 0x%x\n", $t5_prev, $t5
+  end
+  if $t6 != $t6_prev
+    printf "t6:  0x%x -> 0x%x\n", $t6_prev, $t6
+  end
+end
+
+# step one instruction, show diff, then save snapshot
+define stepr
+  stepi
+  diff_regs
+  save_regs
+end

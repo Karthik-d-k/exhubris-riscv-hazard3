@@ -122,6 +122,7 @@ fn main() -> miette::Result<()> {
             // TODO: currently this assumes that the project root is also the
             // workspace root; this is not necessarily true? TBD.
             let targetroot = root.join("target");
+            maybe_create_dir(&targetroot).into_diagnostic()?;
             // Create our working directory.
             let workdir = root.join(".work").join(app.name.value());
             maybe_create_dir(&workdir).into_diagnostic()?;
@@ -278,9 +279,18 @@ fn main() -> miette::Result<()> {
             buildid.hash(&overall_plan);
 
             // Generate the kernel linker script on disk and hash it, too.
-            let kernel_link_text = include_str!("../../../files/kernel-link.x");
+            let kernel_link_text = if target_spec.bfd_name.contains("riscv") {
+                include_str!("../../../files/kernel-link-riscv.x")
+            } else {
+                include_str!("../../../files/kernel-link.x")
+            };
             buildid.eat(kernel_link_text.as_bytes());
-            std::fs::write(workdir.join("kernel-link.x"), kernel_link_text).into_diagnostic()?;
+            let kernel_link_filename = if target_spec.bfd_name.contains("riscv") {
+                "kernel-link-riscv.x"
+            } else {
+                "kernel-link.x"
+            };
+            std::fs::write(workdir.join(kernel_link_filename), kernel_link_text).into_diagnostic()?;
 
             // Finalize the buildid and insert it into the kernel env.
             overall_plan.kernel.smuggled_env.insert(

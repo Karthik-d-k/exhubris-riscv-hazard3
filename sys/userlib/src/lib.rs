@@ -441,6 +441,9 @@ cfg_if::cfg_if! {
     ))] {
         #[path = "arch/arm_m.rs"]
         mod arch;
+    } else if #[cfg(hubris_target = "riscv32imac-unknown-none-elf")] {
+        #[path = "arch/riscv32.rs"]
+        mod arch;
     } else {
         #[path = "arch/fake.rs"]
         mod arch;

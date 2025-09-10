@@ -1,2 +1,9 @@
 /target
 .work/
+*.zip
+*build/
+*.elf
+*.log
+*.hex
+*.bin
+*.txt
