@@ -8,6 +8,7 @@ alias f := flash
 alias g := gdb
 alias d := dump
 alias e := entry-point
+alias c := clean
 
 default:
     @just --list
@@ -37,3 +38,7 @@ dump:
     riscv32-unknown-elf-objdump.exe .\.work\hazard3\final\super -D > super-dump.txt
     riscv32-unknown-elf-objdump.exe .\.work\hazard3\final\kernel -D > kernel-dump.txt
     riscv32-unknown-elf-objdump.exe .\.work\hazard3\final\blinky -D > blinky-dump.txt
+
+clean:
+    cargo clean
+    rm -r -fo .\.work

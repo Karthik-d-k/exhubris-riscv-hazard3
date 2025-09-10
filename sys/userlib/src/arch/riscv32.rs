@@ -88,6 +88,7 @@ pub fn sys_send(
 /// As with `sys_send`, the kernel guarantees that the `usize` returned is less
 /// than or equal to `incoming.len()`, making it safe to use it to slice
 /// `incoming` without checks.
+#[inline(always)]
 pub fn sys_send_to_kernel(
     operation: u16,
     outgoing: &[u8],
