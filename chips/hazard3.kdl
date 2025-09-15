@@ -11,12 +11,12 @@ compatible {
 memory {
     region "vectors" {
         base 0x1000_0000 // XIP_BASE
-        size 0x120 // enlarged to accommodate header
+        size 0x180 // enlarged to accommodate header + IMAGE_DEF
         read
     }
     region "flash" {
-        base 0x1000_0120 // SRAM_BASE
-        size 0x003F_FEE0 // 4MB (0x0040_0000) (FLASH) - 0x120 (vectors) = 0x3FFEE0
+        base 0x1000_0180 // SRAM_BASE
+        size 0x003F_FE80 // 4MB (0x0040_0000) (FLASH) - 0x180 (vectors) = 0x3FFE80
         read
         execute
     }
@@ -43,7 +43,12 @@ peripheral "pads_bank0" {
     size 0x100       // Rounded from 0xCC (204 bytes) 
 }
 
-peripheral "peripherals" {
-    base 0x4000_0000
-    size 0x2000_0000    // Hardwired PMP Region (PMPADDR9)
+peripheral "resets" {
+    base 0x4002_0000
+    size 0x20
 }
+
+// peripheral "peripherals" {
+//     base 0x4000_0000
+//     size 0x2000_0000    // Hardwired PMP Region (PMPADDR9)
+// }
