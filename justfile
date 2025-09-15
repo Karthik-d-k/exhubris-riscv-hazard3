@@ -6,6 +6,7 @@ alias b := build
 alias r := reboot
 alias f := flash
 alias g := gdb
+alias o := openocd
 alias d := dump
 alias e := entry-point
 alias c := clean
@@ -22,7 +23,7 @@ reboot:
     picotool reboot -u -c riscv
 
 flash:
-    openocd -f .\app\rp235x-hazard3\openocd.cfg -c "program output.hex verify"
+    openocd -f .\app\rp235x-hazard3\openocd.cfg -c "program output.hex verify reset"
 
 entry-point:
     @echo ("IDLE   Entry Point: " + ((riscv32-unknown-elf-readelf.exe -h .\.work\hazard3\final\idle | Select-String "Entry point address") -split ":")[1].Trim())
@@ -32,6 +33,9 @@ entry-point:
     
 gdb:
     riscv32-unknown-elf-gdb.exe -x app/rp235x-hazard3/gdbconfig.cfg
+
+openocd:
+    openocd -f .\app\rp235x-hazard3\openocd.cfg
 
 dump:
     riscv32-unknown-elf-objdump.exe .\.work\hazard3\final\idle -D > idle-dump.txt
