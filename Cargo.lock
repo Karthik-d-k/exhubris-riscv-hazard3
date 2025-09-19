@@ -1188,6 +1188,7 @@ dependencies = [
  "kern 0.1.0",
  "riscv",
  "riscv-rt",
+ "rp235x-gpio",
  "rp235x-pac",
  "sha2-const-stable",
 ]

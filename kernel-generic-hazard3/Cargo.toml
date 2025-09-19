@@ -8,6 +8,7 @@ riscv = { version = "0.14", features = ["critical-section-single-hart"] }
 riscv-rt = { version = "0.15" }
 rp235x-pac = {version = "0.1.0", features = ["critical-section", "rt"]}
 sha2-const-stable = "0.1"
+rp235x-gpio = { path = "../drv/rp235x-gpio" }
 
 [dependencies.hubris-kern]
 package = "kern"
@@ -15,3 +16,6 @@ package = "kern"
 #branch = "hazard3"
 path = "../../hubris-riscv-hazard3/sys/kern"
 features = ["dump"]
+
+[features]
+kernel-blink = []

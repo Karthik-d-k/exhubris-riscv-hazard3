@@ -5,6 +5,9 @@
 #![no_std]
 #![no_main]
 
+#[cfg(feature = "kernel-blink")]
+mod blink;
+
 // rp235x-hal: Support for the RP235x Boot ROM's "Block" structures
 // pub mod block;
 
@@ -49,6 +52,12 @@ fn main() -> ! {
     p.RESETS.reset().modify(|_, w| w.io_bank0().clear_bit());
     while !p.RESETS.reset_done().read().io_bank0().bit() {}
 
+    // Provide U-mode access for riscv and non-secure mode access for arm for all GPIOs
+    // This may not work on pico 2(W) boards, refer: Errata `RP2350-E3`
+    p.ACCESSCTRL
+        .gpio_nsmask0()
+        .write(|w| unsafe { w.bits(0xFFFF_FFFF) });
+
     // TODO fix/update this for RP2350
     let cycles_per_ms = if p.CLOCKS.clk_sys_ctrl().read().src().is_clk_ref() {
         // This is the reset state, so we'll assume we launched directly from
@@ -60,6 +69,13 @@ fn main() -> ! {
         // clock.
         48_000
     };
+
+    // This is used to prove that M-mode GPIO works fine, but U-mode doesn't due to Errata `RP2350-E3`
+    #[cfg(feature = "kernel-blink")]
+    {
+        // All of this is executing in M-mode.
+        blink::run_demo();
+    }
 
     unsafe { hubris_kern::startup::start_kernel(cycles_per_ms) }
 }
