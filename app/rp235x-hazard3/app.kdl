@@ -36,7 +36,7 @@ task blinky {
     workspace-crate blinky
     stack-size 256
     priority 1
-    // uses-peripheral sio
+    uses-peripheral sio
     // uses-peripheral io_bank0
     // uses-peripheral pads_bank0
     // uses-peripheral peripherals

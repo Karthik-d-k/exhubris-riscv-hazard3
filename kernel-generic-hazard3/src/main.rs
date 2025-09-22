@@ -73,7 +73,7 @@ fn main() -> ! {
     // This is used to prove that M-mode GPIO works fine, but U-mode doesn't due to Errata `RP2350-E3`
     #[cfg(feature = "kernel-blink")]
     {
-        // All of this is executing in M-mode.
+        // Executing in M-mode.
         blink::run_demo();
     }
 
