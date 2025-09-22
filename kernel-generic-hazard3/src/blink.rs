@@ -9,7 +9,7 @@ pub fn run_demo() {
     led_config_pads(LED_PIN);
     led_config_io(LED_PIN);
 
-    for i in 0..6 {
+    for _ in 0..5 {
         // Turn LED on
         led_set(LED_PIN, true);
         // Wait for a while
