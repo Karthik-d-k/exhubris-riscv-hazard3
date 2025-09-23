@@ -26,22 +26,24 @@ flash:
     openocd -f .\app\rp235x-hazard3\openocd.cfg -c "program output.hex verify reset"
 
 entry-point:
+    @echo ("KERNEL Entry Point: " + ((riscv32-unknown-elf-readelf.exe -h .\.work\hazard3\final\kernel | Select-String "Entry point address") -split ":")[1].Trim())
     @echo ("IDLE   Entry Point: " + ((riscv32-unknown-elf-readelf.exe -h .\.work\hazard3\final\idle | Select-String "Entry point address") -split ":")[1].Trim())
     @echo ("SUPER  Entry Point: " + ((riscv32-unknown-elf-readelf.exe -h .\.work\hazard3\final\super | Select-String "Entry point address") -split ":")[1].Trim())
-    @echo ("KERNEL Entry Point: " + ((riscv32-unknown-elf-readelf.exe -h .\.work\hazard3\final\kernel | Select-String "Entry point address") -split ":")[1].Trim())
     @echo ("BLINKY Entry Point: " + ((riscv32-unknown-elf-readelf.exe -h .\.work\hazard3\final\blinky | Select-String "Entry point address") -split ":")[1].Trim())
-    
+    @echo ("ADC-BLINKY Entry Point: " + ((riscv32-unknown-elf-readelf.exe -h .\.work\hazard3\final\adc-blinky | Select-String "Entry point address") -split ":")[1].Trim())
+
 gdb:
-    riscv32-unknown-elf-gdb.exe -x app/rp235x-hazard3/gdbconfig.cfg
+    riscv32-unknown-elf-gdb.exe -q -x app/rp235x-hazard3/gdbconfig.cfg
 
 openocd:
     openocd -f .\app\rp235x-hazard3\openocd.cfg
 
 dump:
+    riscv32-unknown-elf-objdump.exe .\.work\hazard3\final\kernel -D > kernel-dump.txt
     riscv32-unknown-elf-objdump.exe .\.work\hazard3\final\idle -D > idle-dump.txt
     riscv32-unknown-elf-objdump.exe .\.work\hazard3\final\super -D > super-dump.txt
-    riscv32-unknown-elf-objdump.exe .\.work\hazard3\final\kernel -D > kernel-dump.txt
     riscv32-unknown-elf-objdump.exe .\.work\hazard3\final\blinky -D > blinky-dump.txt
+    riscv32-unknown-elf-objdump.exe .\.work\hazard3\final\adc-blinky -D > adc-blinky-dump.txt
 
 clean:
     cargo clean

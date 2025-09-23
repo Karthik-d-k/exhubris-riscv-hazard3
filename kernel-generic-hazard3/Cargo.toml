@@ -9,12 +9,14 @@ riscv-rt = { version = "0.15" }
 rp235x-pac = {version = "0.1.0", features = ["critical-section", "rt"]}
 sha2-const-stable = "0.1"
 rp235x-gpio = { path = "../drv/rp235x-gpio" }
+rp235x-adc = { path = "../drv/rp235x-adc" }
+riscv-semihosting = { version = "0.2.0", features = ["default"] }
 
 [dependencies.hubris-kern]
 package = "kern"
-git = "https://github.com/Karthik-d-k/hubris-riscv-hazard3"
-branch = "hazard3"
-#path = "../../hubris-riscv-hazard3/sys/kern"
+#git = "https://github.com/Karthik-d-k/hubris-riscv-hazard3"
+#branch = "hazard3"
+path = "../../hubris-riscv-hazard3/sys/kern"
 features = ["dump"]
 
 [features]

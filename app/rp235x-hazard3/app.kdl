@@ -20,7 +20,6 @@ kernel {
     // disable default features for now
     no-default-features
     features kernel-blink
-    uses-peripheral resets
 }
 
 // Supervisor task. Every nontrivial application needs one. The exhubris
@@ -31,11 +30,19 @@ task super {
     priority 0
 }
 
+// adc-blinky task. Blinks an external led
+task adc-blinky {
+    workspace-crate adc-blinky
+    stack-size 256
+    priority 1
+    uses-peripheral resets
+}
+
 // blinky task. Blinks an external led
 task blinky {
     workspace-crate blinky
     stack-size 256
-    priority 1
+    priority 2
     uses-peripheral sio
     // uses-peripheral io_bank0
     // uses-peripheral pads_bank0

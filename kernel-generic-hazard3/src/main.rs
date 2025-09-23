@@ -6,10 +6,11 @@
 #![no_main]
 
 #[cfg(feature = "kernel-blink")]
+mod adc;
+#[cfg(feature = "kernel-blink")]
 mod blink;
 
-// rp235x-hal: Support for the RP235x Boot ROM's "Block" structures
-// pub mod block;
+use hubris_kern::klog;
 
 // We have to do this if we don't otherwise use it to ensure its vector table
 // gets linked in.
@@ -48,9 +49,15 @@ pub static IMAGMINIMUM_RISCV_IMAGE_DEF: ImageDefBlock = ImageDefBlock {
 #[entry]
 fn main() -> ! {
     let p = unsafe { rp235x_pac::Peripherals::steal() };
+    let resets = p.RESETS;
 
-    p.RESETS.reset().modify(|_, w| w.io_bank0().clear_bit());
-    while !p.RESETS.reset_done().read().io_bank0().bit() {}
+    // reset bringup PADS_BANK0
+    resets.reset().modify(|_, w| w.pads_bank0().clear_bit());
+    while !resets.reset_done().read().pads_bank0().bit() {}
+
+    // reset bringup IO_BANK0
+    resets.reset().modify(|_, w| w.io_bank0().clear_bit());
+    while !resets.reset_done().read().io_bank0().bit() {}
 
     // Provide U-mode access for riscv and non-secure mode access for arm for all GPIOs
     // This may not work on pico 2(W) boards, refer: Errata `RP2350-E3`
@@ -70,12 +77,23 @@ fn main() -> ! {
         48_000
     };
 
+    klog!("Cycles per ms: {} MHz", cycles_per_ms / 1000);
+
+    // M-mode setup for ADC and GPIO
+    const ADC_PIN: usize = 26;
+    const LED_PIN: usize = 22;
+    blink::setup_led(LED_PIN);
+    adc::setup_adc(ADC_PIN);
+
     // This is used to prove that M-mode GPIO works fine, but U-mode doesn't due to Errata `RP2350-E3`
     #[cfg(feature = "kernel-blink")]
     {
         // Executing in M-mode.
-        blink::run_demo();
+        blink::run_led_demo();
+        adc::run_adc_demo();
     }
+
+    // PADS initialization for ADC
 
     unsafe { hubris_kern::startup::start_kernel(cycles_per_ms) }
 }

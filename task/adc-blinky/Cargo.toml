@@ -1,0 +1,20 @@
+[package]
+name = "adc-blinky"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+userlib = {workspace = true, features = ["no-panic"]}
+rp235x-adc = {path = "../../drv/rp235x-adc"}
+
+[target.riscv32imac-unknown-none-elf.dependencies]
+riscv = { version = "0.14" }
+
+[target."thumbv8m.main-none-eabihf".dependencies]
+cortex-m = {version = "0.7", features = ["inline-asm"]}
+
+
+[[bin]]
+name = "adc-blinky"
+test = false
+bench = false
