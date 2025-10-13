@@ -48,7 +48,12 @@ peripheral "resets" {
     size 0x20
 }
 
-// peripheral "peripherals" {
-//     base 0x4000_0000
-//     size 0x2000_0000    // Hardwired PMP Region (PMPADDR9)
-// }
+peripheral "pwm" {
+    base 0x400a_8000
+    size 0x200        // Rounded from 0x10C (300 bytes)
+}
+
+peripheral "adc" {
+    base 0x400a_0000
+    size 0x40        // Rounded from 0x24 (36 bytes)
+}

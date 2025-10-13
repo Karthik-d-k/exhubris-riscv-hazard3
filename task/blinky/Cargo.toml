@@ -5,7 +5,8 @@ edition = "2021"
 
 [dependencies]
 userlib = {workspace = true, features = ["no-panic"]}
-rp235x-gpio = {path = "../../drv/rp235x-gpio"}
+rp235x-sys = {path = "../../drv/rp235x-sys"}
+rp235x-pac = {version = "0.1.0"}
 
 [target.riscv32imac-unknown-none-elf.dependencies]
 riscv = { version = "0.14" }

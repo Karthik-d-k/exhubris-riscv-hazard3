@@ -1,3 +1,0 @@
-board nucleo-g031k8
-
-chip "proj:chips/stm32g031k8.kdl"

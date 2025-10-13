@@ -1,3 +1,0 @@
-# demo app
-
-This is a skeleton app used to test the build system.

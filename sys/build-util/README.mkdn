@@ -1,4 +1,0 @@
-# `hubris-build-util`
-
-Utility crate for build scripts in Hubris tasks. Provides access to the build
-environment data, which allows application introspection.
