@@ -19,7 +19,6 @@ kernel {
     stack-size 2048
     // disable default features for now
     no-default-features
-    features kernel-task-blinky
 }
 
 // Supervisor task. Every nontrivial application needs one. The exhubris

@@ -1,3 +1,0 @@
-# ADC blinky task
-
-This task `Blinks` an external LED and adjusts LED brightness using MAX4466 Microphone.

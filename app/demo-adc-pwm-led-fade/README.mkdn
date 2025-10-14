@@ -1,3 +1,0 @@
-# Demo for the RP2350 Pico 2 Board
-
-This is a very basic demo for the hazard3 riscv processor which showcases ADC and PWM functionality.

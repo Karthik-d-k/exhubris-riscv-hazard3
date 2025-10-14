@@ -27,17 +27,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "adc-blinky"
-version = "0.1.0"
-dependencies = [
- "cortex-m",
- "riscv",
- "rp235x-pac",
- "rp235x-sys",
- "userlib",
-]
-
-[[package]]
 name = "addr2line"
 version = "0.24.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"

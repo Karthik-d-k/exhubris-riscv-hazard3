@@ -16,7 +16,3 @@ package = "kern"
 git = "https://github.com/Karthik-d-k/hubris-riscv-hazard3"
 branch = "hazard3"
 features = ["dump"]
-
-[features]
-kernel-task-blinky = []
-kernel-task-adc-blinky = []
