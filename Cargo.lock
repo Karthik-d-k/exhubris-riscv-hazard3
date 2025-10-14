@@ -219,7 +219,6 @@ dependencies = [
 name = "blinky"
 version = "0.1.0"
 dependencies = [
- "cortex-m",
  "riscv",
  "rp235x-pac",
  "rp235x-sys",

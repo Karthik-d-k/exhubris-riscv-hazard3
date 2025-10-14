@@ -7,13 +7,7 @@ edition = "2021"
 userlib = {workspace = true, features = ["no-panic"]}
 rp235x-sys = {path = "../../drv/rp235x-sys"}
 rp235x-pac = {version = "0.1.0"}
-
-[target.riscv32imac-unknown-none-elf.dependencies]
 riscv = { version = "0.14" }
-
-[target."thumbv8m.main-none-eabihf".dependencies]
-cortex-m = {version = "0.7", features = ["inline-asm"]}
-
 
 [[bin]]
 name = "blinky"

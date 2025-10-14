@@ -5,11 +5,7 @@
 #![no_std]
 #![no_main]
 
-#[cfg(target_arch = "riscv32")]
 use riscv::asm;
-
-#[cfg(target_arch = "arm")]
-use cortex_m::asm;
 
 // Ensure we halt the program on panic (if we don't mention this crate it won't
 // be linked)
