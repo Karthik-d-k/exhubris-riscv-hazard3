@@ -13,7 +13,7 @@ riscv-semihosting = { version = "0.2.0", features = ["default"] }
 
 [dependencies.hubris-kern]
 package = "kern"
-git = "https://github.boschdevcloud.com/ADT8KOR/exhubris/tree/rp235x-hazard3"
+git = "https://github.com/Karthik-d-k/hubris-riscv-hazard3"
 branch = "hazard3"
 features = ["dump"]
 
