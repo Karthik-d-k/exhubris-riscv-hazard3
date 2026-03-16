@@ -11,4 +11,4 @@ rp235x-pac = {version = "0.1.0", features = ["rt"]}
 [dependencies.hubris-kern]
 package = "kern"
 git = "https://github.com/oxidecomputer/hubris"
-branch = "master"
+rev = "a468eee7a440b10a5f0a23571912620ccf3f2c8a" # branch: master

@@ -44,9 +44,6 @@ pub static MINIMUM_ARM_IMAGE_DEF: ImageDefBlock = ImageDefBlock {
 fn main() -> ! {
     let p = unsafe { rp235x_pac::Peripherals::steal() };
 
-    p.RESETS.reset().modify(|_, w| w.io_bank0().clear_bit());
-    while !p.RESETS.reset_done().read().io_bank0().bit() {}
-
     // TODO fix/update this for RP2350
     let cycles_per_ms = if p.CLOCKS.clk_sys_ctrl().read().src().is_clk_ref() {
         // This is the reset state, so we'll assume we launched directly from
