@@ -45,18 +45,18 @@ fn main() -> ! {
     let p = unsafe { rp235x_pac::Peripherals::steal() };
 
     // Start XOSC (12 MHz crystal)
-    p.xosc.ctrl().write(|w| {
+    p.XOSC.ctrl().write(|w| {
         w.freq_range()
             .variant(rp235x_pac::xosc::ctrl::FREQ_RANGE_A::_1_15MHZ)
     });
-    p.xosc.startup().write(|w| unsafe { w.delay().bits(47) });
-    p.xosc
+    p.XOSC.startup().write(|w| unsafe { w.delay().bits(47) });
+    p.XOSC
         .ctrl()
         .write(|w| w.enable().variant(rp235x_pac::xosc::ctrl::ENABLE_A::ENABLE));
-    while !p.xosc.status().read().stable().bit_is_set() {}
+    while !p.XOSC.status().read().stable().bit_is_set() {}
 
     // Route XOSC (12 MHz) to clk_peri
-    p.clocks.clk_peri_ctrl().write(|w| {
+    p.CLOCKS.clk_peri_ctrl().write(|w| {
         unsafe { w.auxsrc().bits(4) }; // xosc_clksrc
         w.enable().set_bit();
         w
