@@ -44,17 +44,26 @@ pub static MINIMUM_ARM_IMAGE_DEF: ImageDefBlock = ImageDefBlock {
 fn main() -> ! {
     let p = unsafe { rp235x_pac::Peripherals::steal() };
 
+    // Start XOSC (12 MHz crystal)
+    p.xosc.ctrl().write(|w| {
+        w.freq_range()
+            .variant(rp235x_pac::xosc::ctrl::FREQ_RANGE_A::_1_15MHZ)
+    });
+    p.xosc.startup().write(|w| unsafe { w.delay().bits(47) });
+    p.xosc
+        .ctrl()
+        .write(|w| w.enable().variant(rp235x_pac::xosc::ctrl::ENABLE_A::ENABLE));
+    while !p.xosc.status().read().stable().bit_is_set() {}
+
+    // Route XOSC (12 MHz) to clk_peri
+    p.clocks.clk_peri_ctrl().write(|w| {
+        unsafe { w.auxsrc().bits(4) }; // xosc_clksrc
+        w.enable().set_bit();
+        w
+    });
+
     // TODO fix/update this for RP2350
-    let cycles_per_ms = if p.CLOCKS.clk_sys_ctrl().read().src().is_clk_ref() {
-        // This is the reset state, so we'll assume we launched directly from
-        // flash running on the ROSC.
-        6_000 // ish
-    } else {
-        // This is _not_ the reset state, so we'll assume that the pico-debug
-        // resident debugger has reconfigured things to run off the 48 MHz USB
-        // clock.
-        48_000
-    };
+    let cycles_per_ms = 12_000;
 
     unsafe { hubris_kern::startup::start_kernel(cycles_per_ms) }
 }
