@@ -17,11 +17,11 @@ dependencies = [
 [[package]]
 name = "abi"
 version = "0.1.0"
-source = "git+https://github.com/oxidecomputer/hubris?rev=c4cb88db309a986985a6005acf38aed5311389f7#c4cb88db309a986985a6005acf38aed5311389f7"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?rev=c4cb88db309a986985a6005acf38aed5311389f7#c4cb88db309a986985a6005acf38aed5311389f7"
 dependencies = [
  "bitflags",
  "byteorder",
- "phash 0.1.0 (git+https://github.com/oxidecomputer/hubris?rev=c4cb88db309a986985a6005acf38aed5311389f7)",
+ "phash 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?rev=c4cb88db309a986985a6005acf38aed5311389f7)",
  "serde",
  "zerocopy 0.8.47",
 ]
@@ -128,7 +128,7 @@ dependencies = [
 [[package]]
 name = "armv8-m-mpu"
 version = "0.1.0"
-source = "git+https://github.com/oxidecomputer/hubris?rev=c4cb88db309a986985a6005acf38aed5311389f7#c4cb88db309a986985a6005acf38aed5311389f7"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?rev=c4cb88db309a986985a6005acf38aed5311389f7#c4cb88db309a986985a6005acf38aed5311389f7"
 dependencies = [
  "cortex-m",
 ]
@@ -252,7 +252,7 @@ dependencies = [
 [[package]]
 name = "build-kconfig"
 version = "0.1.0"
-source = "git+https://github.com/oxidecomputer/hubris?rev=c4cb88db309a986985a6005acf38aed5311389f7#c4cb88db309a986985a6005acf38aed5311389f7"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?rev=c4cb88db309a986985a6005acf38aed5311389f7#c4cb88db309a986985a6005acf38aed5311389f7"
 dependencies = [
  "bitflags",
  "serde",
@@ -275,7 +275,7 @@ dependencies = [
 [[package]]
 name = "build-util"
 version = "0.1.0"
-source = "git+https://github.com/oxidecomputer/hubris?rev=c4cb88db309a986985a6005acf38aed5311389f7#c4cb88db309a986985a6005acf38aed5311389f7"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?rev=c4cb88db309a986985a6005acf38aed5311389f7#c4cb88db309a986985a6005acf38aed5311389f7"
 dependencies = [
  "anyhow",
  "indexmap 1.9.3",
@@ -283,7 +283,7 @@ dependencies = [
  "serde",
  "serde_json",
  "toml 0.9.12+spec-1.1.0",
- "toml-task 0.1.0 (git+https://github.com/oxidecomputer/hubris?rev=c4cb88db309a986985a6005acf38aed5311389f7)",
+ "toml-task 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?rev=c4cb88db309a986985a6005acf38aed5311389f7)",
 ]
 
 [[package]]
@@ -328,7 +328,7 @@ dependencies = [
 [[package]]
 name = "call_rustfmt"
 version = "0.1.0"
-source = "git+https://github.com/oxidecomputer/hubris?rev=c4cb88db309a986985a6005acf38aed5311389f7#c4cb88db309a986985a6005acf38aed5311389f7"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?rev=c4cb88db309a986985a6005acf38aed5311389f7#c4cb88db309a986985a6005acf38aed5311389f7"
 dependencies = [
  "anyhow",
 ]
@@ -1161,29 +1161,29 @@ dependencies = [
 [[package]]
 name = "kern"
 version = "0.1.0"
-source = "git+https://github.com/oxidecomputer/hubris?rev=c4cb88db309a986985a6005acf38aed5311389f7#c4cb88db309a986985a6005acf38aed5311389f7"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?rev=c4cb88db309a986985a6005acf38aed5311389f7#c4cb88db309a986985a6005acf38aed5311389f7"
 dependencies = [
- "abi 0.1.0 (git+https://github.com/oxidecomputer/hubris?rev=c4cb88db309a986985a6005acf38aed5311389f7)",
+ "abi 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?rev=c4cb88db309a986985a6005acf38aed5311389f7)",
  "anyhow",
- "armv8-m-mpu 0.1.0 (git+https://github.com/oxidecomputer/hubris?rev=c4cb88db309a986985a6005acf38aed5311389f7)",
+ "armv8-m-mpu 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?rev=c4cb88db309a986985a6005acf38aed5311389f7)",
  "bitflags",
- "build-kconfig 0.1.0 (git+https://github.com/oxidecomputer/hubris?rev=c4cb88db309a986985a6005acf38aed5311389f7)",
- "build-util 0.1.0 (git+https://github.com/oxidecomputer/hubris?rev=c4cb88db309a986985a6005acf38aed5311389f7)",
+ "build-kconfig 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?rev=c4cb88db309a986985a6005acf38aed5311389f7)",
+ "build-util 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?rev=c4cb88db309a986985a6005acf38aed5311389f7)",
  "byteorder",
- "call_rustfmt 0.1.0 (git+https://github.com/oxidecomputer/hubris?rev=c4cb88db309a986985a6005acf38aed5311389f7)",
+ "call_rustfmt 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?rev=c4cb88db309a986985a6005acf38aed5311389f7)",
  "cfg-if",
  "cortex-m",
  "indexmap 1.9.3",
- "kerncore 0.1.0 (git+https://github.com/oxidecomputer/hubris?rev=c4cb88db309a986985a6005acf38aed5311389f7)",
- "phash 0.1.0 (git+https://github.com/oxidecomputer/hubris?rev=c4cb88db309a986985a6005acf38aed5311389f7)",
- "phash-gen 0.1.0 (git+https://github.com/oxidecomputer/hubris?rev=c4cb88db309a986985a6005acf38aed5311389f7)",
+ "kerncore 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?rev=c4cb88db309a986985a6005acf38aed5311389f7)",
+ "phash 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?rev=c4cb88db309a986985a6005acf38aed5311389f7)",
+ "phash-gen 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?rev=c4cb88db309a986985a6005acf38aed5311389f7)",
  "proc-macro2",
  "quote",
  "ron",
  "serde",
  "ssmarshal",
  "syn 2.0.117",
- "unwrap-lite 0.1.0 (git+https://github.com/oxidecomputer/hubris?rev=c4cb88db309a986985a6005acf38aed5311389f7)",
+ "unwrap-lite 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?rev=c4cb88db309a986985a6005acf38aed5311389f7)",
  "zerocopy 0.8.47",
  "zerocopy-derive 0.8.47",
 ]
@@ -1196,7 +1196,7 @@ source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubr
 [[package]]
 name = "kerncore"
 version = "0.1.0"
-source = "git+https://github.com/oxidecomputer/hubris?rev=c4cb88db309a986985a6005acf38aed5311389f7#c4cb88db309a986985a6005acf38aed5311389f7"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?rev=c4cb88db309a986985a6005acf38aed5311389f7#c4cb88db309a986985a6005acf38aed5311389f7"
 
 [[package]]
 name = "kernel-generic-cortex-m33"
@@ -1204,7 +1204,7 @@ version = "0.1.0"
 dependencies = [
  "cortex-m",
  "cortex-m-rt",
- "kern 0.1.0 (git+https://github.com/oxidecomputer/hubris?rev=c4cb88db309a986985a6005acf38aed5311389f7)",
+ "kern 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?rev=c4cb88db309a986985a6005acf38aed5311389f7)",
  "rp235x-pac",
 ]
 
@@ -1587,7 +1587,7 @@ source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubr
 [[package]]
 name = "phash"
 version = "0.1.0"
-source = "git+https://github.com/oxidecomputer/hubris?rev=c4cb88db309a986985a6005acf38aed5311389f7#c4cb88db309a986985a6005acf38aed5311389f7"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?rev=c4cb88db309a986985a6005acf38aed5311389f7#c4cb88db309a986985a6005acf38aed5311389f7"
 
 [[package]]
 name = "phash-gen"
@@ -1603,10 +1603,10 @@ dependencies = [
 [[package]]
 name = "phash-gen"
 version = "0.1.0"
-source = "git+https://github.com/oxidecomputer/hubris?rev=c4cb88db309a986985a6005acf38aed5311389f7#c4cb88db309a986985a6005acf38aed5311389f7"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?rev=c4cb88db309a986985a6005acf38aed5311389f7#c4cb88db309a986985a6005acf38aed5311389f7"
 dependencies = [
  "anyhow",
- "phash 0.1.0 (git+https://github.com/oxidecomputer/hubris?rev=c4cb88db309a986985a6005acf38aed5311389f7)",
+ "phash 0.1.0 (git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?rev=c4cb88db309a986985a6005acf38aed5311389f7)",
  "rand 0.8.5",
  "rand_chacha",
 ]
@@ -2253,7 +2253,7 @@ dependencies = [
 [[package]]
 name = "toml-task"
 version = "0.1.0"
-source = "git+https://github.com/oxidecomputer/hubris?rev=c4cb88db309a986985a6005acf38aed5311389f7#c4cb88db309a986985a6005acf38aed5311389f7"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?rev=c4cb88db309a986985a6005acf38aed5311389f7#c4cb88db309a986985a6005acf38aed5311389f7"
 dependencies = [
  "anyhow",
  "indexmap 1.9.3",
@@ -2394,7 +2394,7 @@ source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubr
 [[package]]
 name = "unwrap-lite"
 version = "0.1.0"
-source = "git+https://github.com/oxidecomputer/hubris?rev=c4cb88db309a986985a6005acf38aed5311389f7#c4cb88db309a986985a6005acf38aed5311389f7"
+source = "git+https://github.com/Karthik-d-k/hubris-riscv-hazard3?rev=c4cb88db309a986985a6005acf38aed5311389f7#c4cb88db309a986985a6005acf38aed5311389f7"
 
 [[package]]
 name = "userlib"

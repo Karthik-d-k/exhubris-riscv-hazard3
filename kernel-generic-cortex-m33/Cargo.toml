@@ -10,8 +10,8 @@ rp235x-pac = { version = "0.1.0", features = ["rt"] }
 
 [dependencies.hubris-kern]
 package = "kern"
-git = "https://github.com/Karthik-d-k/hubris"
-rev = "c4cb88db309a986985a6005acf38aed5311389f7" # branch: no-mpu
+git = "https://github.com/Karthik-d-k/hubris-riscv-hazard3"
+rev = "c4cb88db309a986985a6005acf38aed5311389f7"            # branch: no-mpu
 
 [features]
 no-mpu = ["hubris-kern/no-mpu"]
