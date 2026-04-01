@@ -6,9 +6,12 @@ edition = "2021"
 [dependencies]
 cortex-m = { version = "0.7.7", features = ["inline-asm"] }
 cortex-m-rt = "0.7.5"
-rp235x-pac = {version = "0.1.0", features = ["rt"]}
+rp235x-pac = { version = "0.1.0", features = ["rt"] }
 
 [dependencies.hubris-kern]
 package = "kern"
-git = "https://github.com/oxidecomputer/hubris"
-rev = "a468eee7a440b10a5f0a23571912620ccf3f2c8a" # branch: master
+git = "https://github.com/Karthik-d-k/hubris"
+rev = "c4cb88db309a986985a6005acf38aed5311389f7" # branch: no-mpu
+
+[features]
+no-mpu = ["hubris-kern/no-mpu"]
