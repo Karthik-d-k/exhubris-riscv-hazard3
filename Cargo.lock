@@ -259,6 +259,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "build-kconfig"
+version = "0.1.0"
+source = "git+https://github.com/oxidecomputer/hubris.git#5b1cc0c1e2d80b75ebb20e441960e30028a80a50"
+dependencies = [
+ "bitflags",
+ "serde",
+]
+
+[[package]]
 name = "build-util"
 version = "0.1.0"
 source = "git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes#061df2fc76433bbc7cc3931a8981fbd509e35c97"
@@ -921,7 +930,7 @@ name = "hubris-build"
 version = "0.1.0"
 dependencies = [
  "blake3",
- "build-kconfig 0.1.0 (git+https://github.com/cbiffle/hubris-fork.git?branch=cbiffle%2Fexhubris-fixes)",
+ "build-kconfig 0.1.0 (git+https://github.com/oxidecomputer/hubris.git)",
  "cargo_metadata",
  "clap",
  "comfy-table",
